@@ -133,6 +133,51 @@ first leaderboard view.
   profile) were updated to consume the variables so dark mode applies
   uniformly.
 
+---
+
+## Phase 5 — Tournament Questions
+
+Pre-tournament side-bet questions. Users can submit and edit answers up until
+each question's `deadline`; the server is the source of truth on locking.
+
+**Backend**
+
+- `GET  /api/questions` (public) — every question with `id`, `text`,
+  `deadline`, `points`, a server-computed `locked` flag, and `correctAnswer`
+  (revealed only once the question is locked).
+- `GET  /api/questions/my-answers` — the signed-in user's answers, each with
+  a `locked` flag.
+- `POST /api/questions/answers` — submit a brand-new answer.
+- `PUT  /api/questions/answers/{answerId}` — edit an existing answer.
+- Locking and ownership rules live in
+  [`TournamentQuestionService`](backend/src/main/java/com/example/worldcup/question/TournamentQuestionService.java):
+  - rejects submit/update when `now >= deadline` (HTTP 400),
+  - rejects a second submit for the same `(user, question)` pair (HTTP 409 —
+    the unique constraint also guards this in the DB),
+  - rejects editing another user's answer (HTTP 403).
+- `GET /api/questions` is added to the security `permitAll` list so the home
+  page can show a teaser later; the answer endpoints require authentication.
+- DTOs and the route surface live in
+  [`question/dto/`](backend/src/main/java/com/example/worldcup/question/dto)
+  and
+  [`TournamentQuestionController`](backend/src/main/java/com/example/worldcup/question/TournamentQuestionController.java).
+
+**Frontend**
+
+- Route `/tournament-questions` (auth-guarded) and a nav link in the
+  authenticated section of the navbar.
+- [`TournamentQuestionsPageComponent`](frontend/src/app/features/questions/tournament-questions-page.component.ts)
+  loads questions and the user's answers in parallel via `forkJoin`, joins
+  them by `questionId` into a `Map`, and renders one
+  [`QuestionFormComponent`](frontend/src/app/features/questions/question-form.component.ts)
+  per question.
+- The form is a single text input with a Save/Update button driven by a
+  `FormControl`. When the question's `locked` flag flips, the control is
+  disabled and the layout switches to a read-only view that surfaces the
+  user's answer plus the correct answer (once revealed).
+- After a successful save, the child emits the new `TournamentAnswer` and the
+  page updates its `answersByQuestionId` map without a re-fetch.
+
 Migrations run automatically on backend startup. To re-seed a clean DB:
 
 ```sql
@@ -308,4 +353,19 @@ After running the backend and frontend (see sections 2 and 3 above):
 - [x] Navbar + main-layout components with mobile-friendly hamburger menu.
 - [x] Automatic dark-mode support via `prefers-color-scheme`.
 
-Next up: **Phase 5** — match listings and prediction submission.
+## Phase 5 completion criteria
+
+- [x] List all tournament questions, with server-computed `locked` flag.
+- [x] Fetch the current user's saved answers.
+- [x] Submit a new answer (rejected after the deadline).
+- [x] Update an existing answer (rejected after the deadline, and only by its
+      owner).
+- [x] Frontend page renders a question form per question with a locked state.
+
+### Tip
+
+The seeded questions have deadlines in mid-2026. To exercise the locked state
+locally, edit a row's `deadline` in the `tournament_questions` table to a
+past timestamp, or wait for the deadline to pass.
+
+Next up: **Phase 6** — match listings and prediction submission.

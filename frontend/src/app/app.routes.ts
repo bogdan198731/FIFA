@@ -40,5 +40,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.ProfileComponent)
   },
+  {
+    path: 'tournament-questions',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/questions/tournament-questions-page.component').then(
+        (m) => m.TournamentQuestionsPageComponent
+      )
+  },
   { path: '**', redirectTo: '' }
 ];

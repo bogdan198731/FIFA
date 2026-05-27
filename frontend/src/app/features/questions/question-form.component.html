@@ -1,0 +1,48 @@
+<article class="question" [class.is-locked]="question.locked">
+  <header class="question-header">
+    <h3>{{ question.text }}</h3>
+    <div class="meta">
+      <span class="points">{{ question.points }} pts</span>
+      @if (question.locked) {
+        <span class="badge badge--locked">Locked</span>
+      } @else {
+        <span class="deadline">
+          Closes {{ question.deadline | date:'medium' }}
+        </span>
+      }
+    </div>
+  </header>
+
+  @if (question.locked) {
+    <dl class="locked-view">
+      <dt>Your answer</dt>
+      <dd>{{ savedAnswer?.answer ?? '— no answer submitted —' }}</dd>
+
+      @if (question.correctAnswer) {
+        <dt>Correct answer</dt>
+        <dd class="correct">{{ question.correctAnswer }}</dd>
+      }
+    </dl>
+  } @else {
+    <div class="form-row">
+      <input
+        type="text"
+        [formControl]="answerControl"
+        [attr.aria-label]="question.text"
+        placeholder="Type your answer"
+        maxlength="200"
+      />
+      <button type="button" class="primary" [disabled]="submitting()" (click)="save()">
+        {{ submitting() ? 'Saving…' : (savedAnswer ? 'Update' : 'Save') }}
+      </button>
+    </div>
+
+    @if (feedback(); as f) {
+      <p class="feedback" [class.feedback--error]="f.kind === 'error'">{{ f.message }}</p>
+    } @else if (savedAnswer) {
+      <p class="feedback feedback--muted">
+        Saved {{ savedAnswer.updatedAt | date:'medium' }}
+      </p>
+    }
+  }
+</article>
