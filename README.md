@@ -376,10 +376,23 @@ After running the backend and frontend (see sections 2 and 3 above):
 - [x] Frontend route `/predictions` renders match cards with score inputs,
       save/update actions, knockout qualified-team selection, and locked state.
 
+## Phase 7 completion criteria
+
+- [x] Dedicated scoring service at
+      `backend/src/main/java/com/example/worldcup/common/scoring/ScoringService.java`.
+- [x] Regular match scoring: exact score = 5, correct winner/draw = 3,
+      wrong prediction = 0.
+- [x] Knockout match scoring: exact score + qualified team = 7, qualified team
+      only = 4, exact score only = 2, wrong prediction = 0.
+- [x] Tournament question scoring awards the question's configured points for
+      a matching answer.
+- [x] Scoring logic is independent from controllers and covered by focused
+      unit tests.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 7** - scoring predictions and updating the leaderboard.
+Next up: **Phase 8** - applying scores to predictions and updating the leaderboard.
