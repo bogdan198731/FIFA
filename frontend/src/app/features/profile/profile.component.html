@@ -1,0 +1,14 @@
+<section class="page">
+  <h1>Profile</h1>
+
+  @if (currentUser(); as user) {
+    <dl class="details">
+      <dt>Username</dt><dd>{{ user.username }}</dd>
+      <dt>Email</dt><dd>{{ user.email }}</dd>
+      <dt>Role</dt><dd><span class="badge" [class.badge--admin]="user.role === 'ADMIN'">{{ user.role }}</span></dd>
+      <dt>User ID</dt><dd>{{ user.id }}</dd>
+    </dl>
+
+    <button type="button" class="danger" (click)="logout()">Sign out</button>
+  }
+</section>

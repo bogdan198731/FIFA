@@ -1,0 +1,5 @@
+@use '../auth-forms';
+
+.auth-card label small.error {
+  font-size: 0.8rem;
+}

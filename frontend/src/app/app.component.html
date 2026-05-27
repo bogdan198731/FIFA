@@ -1,20 +1,4 @@
-<main class="container">
-  <h1>{{ title }}</h1>
-  <p class="subtitle">Phase 1 — Project Foundation</p>
-
-  <section class="health-card">
-    <h2>Backend health</h2>
-    @if (health(); as h) {
-      <p class="status status--up">
-        <strong>{{ h.status }}</strong> — {{ h.service }}
-      </p>
-      <p class="timestamp">Checked at {{ h.timestamp }}</p>
-    } @else if (error()) {
-      <p class="status status--down">DOWN — {{ error() }}</p>
-    } @else {
-      <p class="status">Checking…</p>
-    }
-  </section>
-
+<app-header />
+<main class="app-main">
   <router-outlet />
 </main>

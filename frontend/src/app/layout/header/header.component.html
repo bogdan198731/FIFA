@@ -1,0 +1,20 @@
+<header class="app-header">
+  <a class="brand" routerLink="/">World Cup Pool</a>
+
+  @if (isAuthenticated()) {
+    <nav class="nav">
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    </nav>
+
+    <div class="user">
+      <span class="username">{{ currentUser()?.username }}</span>
+      <button type="button" class="link-button" (click)="logout()">Sign out</button>
+    </div>
+  } @else {
+    <nav class="nav nav--right">
+      <a routerLink="/login" routerLinkActive="active">Sign in</a>
+      <a routerLink="/register" routerLinkActive="active" class="cta">Register</a>
+    </nav>
+  }
+</header>

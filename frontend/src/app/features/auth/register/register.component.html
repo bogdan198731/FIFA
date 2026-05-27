@@ -1,0 +1,57 @@
+<section class="auth-card">
+  <h1>Create account</h1>
+  <p class="muted">Join the pool and start predicting matches.</p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <label>
+      <span>Username</span>
+      <input
+        type="text"
+        autocomplete="username"
+        formControlName="username"
+        [attr.aria-invalid]="form.controls.username.invalid && form.controls.username.touched"
+      />
+      @if (form.controls.username.touched && form.controls.username.errors?.['minlength']) {
+        <small class="error">At least 3 characters.</small>
+      }
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input
+        type="email"
+        autocomplete="email"
+        formControlName="email"
+        [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+      />
+      @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
+        <small class="error">Enter a valid email.</small>
+      }
+    </label>
+
+    <label>
+      <span>Password</span>
+      <input
+        type="password"
+        autocomplete="new-password"
+        formControlName="password"
+        [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+      />
+      @if (form.controls.password.touched && form.controls.password.errors?.['minlength']) {
+        <small class="error">At least 8 characters.</small>
+      }
+    </label>
+
+    @if (error()) {
+      <p class="error" role="alert">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Creating account…' : 'Create account' }}
+    </button>
+  </form>
+
+  <p class="muted switch">
+    Already have an account? <a routerLink="/login">Sign in</a>
+  </p>
+</section>

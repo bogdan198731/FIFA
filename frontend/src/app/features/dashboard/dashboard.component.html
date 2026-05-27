@@ -1,0 +1,21 @@
+<section class="page">
+  <header>
+    <h1>Welcome, {{ currentUser()?.username }}</h1>
+    <p class="muted">
+      Predictions and tournament questions will appear here once the next
+      phases land. For now, this is the authenticated landing page.
+    </p>
+  </header>
+
+  <article class="card">
+    <h2>Backend health</h2>
+    @if (health(); as h) {
+      <p class="status status--up"><strong>{{ h.status }}</strong> — {{ h.service }}</p>
+      <p class="timestamp">Checked at {{ h.timestamp }}</p>
+    } @else if (healthError()) {
+      <p class="status status--down">DOWN — {{ healthError() }}</p>
+    } @else {
+      <p class="status">Checking…</p>
+    }
+  </article>
+</section>
