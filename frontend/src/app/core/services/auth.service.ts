@@ -31,21 +31,22 @@ export class AuthService {
   }
 
   /** Called once at startup; hydrates the current user if a token is stored. */
-  bootstrap(): void {
+  bootstrap(): Observable<UserResponse | null> {
     if (!this.getToken()) {
       this._initialized.set(true);
-      return;
+      return of(null);
     }
-    this.http.get<UserResponse>(`${environment.apiBaseUrl}/auth/me`).subscribe({
-      next: (user) => {
+    return this.http.get<UserResponse>(`${environment.apiBaseUrl}/auth/me`).pipe(
+      tap((user) => {
         this._currentUser.set(user);
         this._initialized.set(true);
-      },
-      error: () => {
+      }),
+      catchError(() => {
         this.clearSession();
         this._initialized.set(true);
-      }
-    });
+        return of(null);
+      })
+    );
   }
 
   login(req: LoginRequest): Observable<AuthResponse> {

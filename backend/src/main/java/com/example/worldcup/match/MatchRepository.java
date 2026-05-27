@@ -13,5 +13,5 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     List<Match> findByStage(MatchStage stage);
 
-    List<Match> findByFinishedFalseAndKickoffAtAfter(Instant after);
+    List<Match> findByFinishedFalseAndKickoffAtAfterOrderByKickoffAtAsc(Instant after);
 }

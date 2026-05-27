@@ -19,6 +19,7 @@
 
     @if (isAuthenticated()) {
       <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()">Dashboard</a>
+      <a routerLink="/predictions" routerLinkActive="active" (click)="closeMenu()">Predictions</a>
       <a routerLink="/tournament-questions" routerLinkActive="active" (click)="closeMenu()">Questions</a>
       <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">Profile</a>
     }

@@ -1,0 +1,80 @@
+<article class="match" [class.is-locked]="match.locked">
+  <header class="match-header">
+    <div>
+      <p class="stage">{{ match.stage.replaceAll('_', ' ') }}</p>
+      <h3>{{ match.homeTeam }} vs {{ match.awayTeam }}</h3>
+    </div>
+    <div class="meta">
+      <span>{{ match.kickoffAt | date:'medium' }}</span>
+      @if (match.locked) {
+        <span class="badge">Locked</span>
+      }
+    </div>
+  </header>
+
+  @if (match.venue) {
+    <p class="venue">{{ match.venue }}</p>
+  }
+
+  @if (match.locked) {
+    <dl class="locked-view">
+      <dt>Your prediction</dt>
+      <dd>
+        @if (prediction) {
+          {{ prediction.homeScore }} - {{ prediction.awayScore }}
+          @if (prediction.qualifiedTeam) {
+            <span>({{ prediction.qualifiedTeam }} qualifies)</span>
+          }
+        } @else {
+          no prediction submitted
+        }
+      </dd>
+
+      @if (match.finished) {
+        <dt>Result</dt>
+        <dd>
+          {{ match.homeScore }} - {{ match.awayScore }}
+          @if (match.knockoutWinner) {
+            <span>({{ match.knockoutWinner }} qualified)</span>
+          }
+        </dd>
+      }
+    </dl>
+  } @else {
+    <div class="score-row">
+      <label>
+        <span>{{ match.homeTeam }}</span>
+        <input type="number" min="0" inputmode="numeric" [formControl]="homeScoreControl" />
+      </label>
+      <span class="dash">-</span>
+      <label>
+        <span>{{ match.awayTeam }}</span>
+        <input type="number" min="0" inputmode="numeric" [formControl]="awayScoreControl" />
+      </label>
+    </div>
+
+    @if (match.matchType === 'KNOCKOUT') {
+      <label class="qualified">
+        <span>Qualified team</span>
+        <select [formControl]="qualifiedTeamControl">
+          <option value="">Choose team</option>
+          <option [value]="match.homeTeam">{{ match.homeTeam }}</option>
+          <option [value]="match.awayTeam">{{ match.awayTeam }}</option>
+        </select>
+      </label>
+    }
+
+    <div class="actions">
+      <button type="button" class="primary" [disabled]="submitting()" (click)="save()">
+        {{ submitting() ? 'Saving...' : (prediction ? 'Update' : 'Save') }}
+      </button>
+      @if (feedback(); as f) {
+        <p class="feedback" [class.feedback--error]="f.kind === 'error'">{{ f.message }}</p>
+      } @else if (prediction) {
+        <p class="feedback feedback--muted">
+          Saved {{ prediction.updatedAt | date:'medium' }}
+        </p>
+      }
+    </div>
+  }
+</article>

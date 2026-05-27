@@ -362,10 +362,24 @@ After running the backend and frontend (see sections 2 and 3 above):
       owner).
 - [x] Frontend page renders a question form per question with a locked state.
 
+## Phase 6 completion criteria
+
+- [x] `GET /api/matches` returns all matches ordered by kickoff.
+- [x] `GET /api/matches/upcoming` returns unfinished future matches.
+- [x] `GET /api/predictions/my` returns the signed-in user's predictions.
+- [x] `POST /api/predictions` creates a match prediction before kickoff.
+- [x] `PUT /api/predictions/{predictionId}` updates the owner's prediction
+      before kickoff.
+- [x] Regular matches allow drawn score predictions.
+- [x] Knockout matches require `qualifiedTeam`, even when the score prediction
+      is a draw.
+- [x] Frontend route `/predictions` renders match cards with score inputs,
+      save/update actions, knockout qualified-team selection, and locked state.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 6** — match listings and prediction submission.
+Next up: **Phase 7** - scoring predictions and updating the leaderboard.

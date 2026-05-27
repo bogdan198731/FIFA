@@ -70,8 +70,6 @@
     color: var(--text);
     font-size: 0.95rem;
     font-family: inherit;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
     &:focus {
       outline: none;
       border-color: var(--accent);
@@ -88,8 +86,6 @@
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: background 0.15s ease;
-
     &:hover:not(:disabled) {
       background: var(--accent-strong);
     }

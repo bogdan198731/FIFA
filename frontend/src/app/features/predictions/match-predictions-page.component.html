@@ -1,0 +1,37 @@
+<section class="page">
+  <header class="header">
+    <h1>Match predictions</h1>
+    <p class="muted">
+      Pick the score before kickoff. Knockout matches also need the team that
+      qualifies.
+    </p>
+  </header>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading...</p>
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+    @case ('ready') {
+      @if (matches().length === 0) {
+        <p class="muted">No matches have been published yet.</p>
+      } @else {
+        <p class="muted summary">
+          {{ openCount() }} of {{ matches().length }} still open.
+          {{ savedCount() }} saved.
+        </p>
+        <div class="list">
+          @for (match of matches(); track match.id) {
+            <app-match-card
+              [match]="match"
+              [prediction]="predictionFor(match.id)"
+              (predictionSaved)="onPredictionSaved($event)"
+            />
+          }
+        </div>
+      }
+    }
+  }
+</section>

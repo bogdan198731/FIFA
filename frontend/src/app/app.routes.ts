@@ -48,5 +48,13 @@ export const routes: Routes = [
         (m) => m.TournamentQuestionsPageComponent
       )
   },
+  {
+    path: 'predictions',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/predictions/match-predictions-page.component').then(
+        (m) => m.MatchPredictionsPageComponent
+      )
+  },
   { path: '**', redirectTo: '' }
 ];
