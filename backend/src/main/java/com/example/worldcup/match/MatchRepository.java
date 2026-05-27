@@ -11,6 +11,8 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     List<Match> findAllByOrderByKickoffAtAsc();
 
+    List<Match> findByFinishedTrue();
+
     List<Match> findByStage(MatchStage stage);
 
     List<Match> findByFinishedFalseAndKickoffAtAfterOrderByKickoffAtAsc(Instant after);

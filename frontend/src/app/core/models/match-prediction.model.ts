@@ -31,6 +31,7 @@ export interface MatchPrediction {
   homeScore: number;
   awayScore: number;
   qualifiedTeam: string | null;
+  pointsAwarded: number;
   locked: boolean;
   createdAt: string;
   updatedAt: string;
@@ -67,4 +68,11 @@ export interface MatchResultRequest {
   awayScore?: number | null;
   qualifiedTeam?: string | null;
   isFinished: boolean;
+}
+
+export interface ScoreRecalculationResponse {
+  matchesScored: number;
+  predictionsScored: number;
+  answersScored: number;
+  usersUpdated: number;
 }

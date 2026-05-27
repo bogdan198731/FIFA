@@ -50,6 +50,9 @@ public class Prediction {
     @Column(name = "predicted_winner", length = 64)
     private String predictedWinner;
 
+    @Column(name = "points_awarded", nullable = false)
+    private int pointsAwarded;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -65,6 +68,7 @@ public class Prediction {
         this.match = match;
         this.predictedHomeScore = predictedHomeScore;
         this.predictedAwayScore = predictedAwayScore;
+        this.pointsAwarded = 0;
         Instant now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;
@@ -109,6 +113,14 @@ public class Prediction {
 
     public void setPredictedWinner(String predictedWinner) {
         this.predictedWinner = predictedWinner;
+    }
+
+    public int getPointsAwarded() {
+        return pointsAwarded;
+    }
+
+    public void setPointsAwarded(int pointsAwarded) {
+        this.pointsAwarded = pointsAwarded;
     }
 
     public Instant getCreatedAt() {

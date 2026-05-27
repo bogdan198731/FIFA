@@ -24,6 +24,7 @@
       @if (isAdmin()) {
         <a routerLink="/admin/matches" routerLinkActive="active" (click)="closeMenu()">Admin matches</a>
         <a routerLink="/admin/results" routerLinkActive="active" (click)="closeMenu()">Results</a>
+        <a routerLink="/admin/recalculate-scores" routerLinkActive="active" (click)="closeMenu()">Scores</a>
       }
       <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">Profile</a>
     }

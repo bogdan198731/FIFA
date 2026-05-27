@@ -11,6 +11,7 @@ export interface TournamentAnswer {
   id: number;
   questionId: number;
   answer: string;
+  pointsAwarded: number;
   locked: boolean;
   createdAt: string;
   updatedAt: string;

@@ -403,10 +403,22 @@ After running the backend and frontend (see sections 2 and 3 above):
 - [x] Admin match form and result form support fixture management, result entry,
       and manual lock/unlock actions.
 
+## Phase 9 completion criteria
+
+- [x] `points_awarded` is stored on match predictions and tournament answers.
+- [x] `POST /api/admin/scores/recalculate` recalculates all finished match
+      predictions, tournament answers, and every user's `totalPoints`.
+- [x] `POST /api/admin/scores/recalculate/matches/{matchId}` recalculates one
+      match's predictions and rebuilds user totals from saved points.
+- [x] Recalculation is idempotent: totals are rebuilt from stored prediction
+      and answer points instead of incremented.
+- [x] Angular admin route `/admin/recalculate-scores` provides an all-scores
+      action and per-match recalculation actions.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 9** - applying scores to predictions and updating the leaderboard.
+Next up: **Phase 10** - surfacing awarded points to users and expanding score history.

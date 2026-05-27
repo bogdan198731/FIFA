@@ -44,6 +44,9 @@ public class TournamentAnswer {
     @Column(nullable = false, length = 200)
     private String answer;
 
+    @Column(name = "points_awarded", nullable = false)
+    private int pointsAwarded;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -57,6 +60,7 @@ public class TournamentAnswer {
         this.user = user;
         this.question = question;
         this.answer = answer;
+        this.pointsAwarded = 0;
         Instant now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;
@@ -85,6 +89,14 @@ public class TournamentAnswer {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public int getPointsAwarded() {
+        return pointsAwarded;
+    }
+
+    public void setPointsAwarded(int pointsAwarded) {
+        this.pointsAwarded = pointsAwarded;
     }
 
     public Instant getCreatedAt() {

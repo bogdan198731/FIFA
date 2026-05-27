@@ -8,6 +8,7 @@ public record TournamentAnswerResponse(
         Long id,
         Long questionId,
         String answer,
+        int pointsAwarded,
         boolean locked,
         Instant createdAt,
         Instant updatedAt
@@ -19,6 +20,7 @@ public record TournamentAnswerResponse(
                 answer.getId(),
                 answer.getQuestion().getId(),
                 answer.getAnswer(),
+                answer.getPointsAwarded(),
                 locked,
                 answer.getCreatedAt(),
                 answer.getUpdatedAt()

@@ -72,5 +72,13 @@ export const routes: Routes = [
         (m) => m.AdminResultsPageComponent
       )
   },
+  {
+    path: 'admin/recalculate-scores',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-recalculate-scores-page.component').then(
+        (m) => m.AdminRecalculateScoresPageComponent
+      )
+  },
   { path: '**', redirectTo: '' }
 ];

@@ -1,0 +1,70 @@
+<section class="admin-page">
+  <header class="header">
+    <h1>Recalculate scores</h1>
+    <p>Rebuild awarded points and leaderboard totals from saved predictions and answers.</p>
+  </header>
+
+  <section class="panel">
+    <h2>All scores</h2>
+    <p class="muted">
+      Recalculates finished matches, tournament questions, and every user's total points.
+    </p>
+    <button type="button" class="primary-action" [disabled]="recalculatingAll()" (click)="recalculateAll()">
+      {{ recalculatingAll() ? 'Recalculating...' : 'Recalculate all scores' }}
+    </button>
+  </section>
+
+  @if (result(); as r) {
+    <section class="panel summary-grid" aria-live="polite">
+      <div>
+        <strong>{{ r.matchesScored }}</strong>
+        <span>matches scored</span>
+      </div>
+      <div>
+        <strong>{{ r.predictionsScored }}</strong>
+        <span>predictions updated</span>
+      </div>
+      <div>
+        <strong>{{ r.answersScored }}</strong>
+        <span>answers updated</span>
+      </div>
+      <div>
+        <strong>{{ r.usersUpdated }}</strong>
+        <span>users updated</span>
+      </div>
+    </section>
+  }
+
+  @if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading matches...</p>
+    }
+    @case ('ready') {
+      <section class="panel">
+        <h2>One match</h2>
+        <div class="score-list">
+          @for (match of matches(); track match.id) {
+            <div class="score-row">
+              <div>
+                <strong>{{ match.homeTeam }} vs {{ match.awayTeam }}</strong>
+                <span>{{ match.stage.replaceAll('_', ' ') }} - {{ match.finished ? 'finished' : 'not finished' }}</span>
+              </div>
+              <button
+                type="button"
+                class="secondary-action"
+                [disabled]="recalculatingMatchId() === match.id"
+                (click)="recalculateMatch(match)"
+              >
+                {{ recalculatingMatchId() === match.id ? 'Recalculating...' : 'Recalculate match' }}
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+</section>
