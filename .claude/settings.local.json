@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(java --version)",
+      "Bash(mvn --version)",
+      "Bash(ng version *)",
+      "Bash(ng new *)",
+      "Bash(mvn -q -DskipTests compile)",
+      "Bash(npx ng *)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(mvn -q test)"
+    ]
+  }
+}

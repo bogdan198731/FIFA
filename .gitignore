@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Env
+.env
+.env.local
+
+# Build outputs are scoped per-project; see backend/.gitignore and
+# frontend/.gitignore for language-specific entries.
