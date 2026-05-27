@@ -9,14 +9,17 @@
 
   @switch (state()) {
     @case ('loading') {
-      <p class="muted">Loading…</p>
+      <app-loading-spinner label="Loading questions" />
     }
     @case ('error') {
-      <p class="error" role="alert">{{ errorMessage() }}</p>
+      <p class="error" role="alert">{{ errorMessage() }} Please try again shortly.</p>
     }
     @case ('ready') {
       @if (questions().length === 0) {
-        <p class="muted">No tournament questions have been published yet.</p>
+        <app-empty-state
+          title="No questions yet"
+          message="Tournament questions will appear here when the admin publishes them."
+        />
       } @else {
         <p class="muted summary">
           {{ openCount() }} of {{ questions().length }} still open.

@@ -3,12 +3,15 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { LeaderboardService } from '../../core/services/leaderboard.service';
 import { LeaderboardEntry } from '../../core/models/leaderboard.model';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-leaderboard-table',
   standalone: true,
+  imports: [EmptyStateComponent, LoadingSpinnerComponent],
   templateUrl: './leaderboard-table.component.html',
   styleUrl: './leaderboard-table.component.scss'
 })

@@ -1,0 +1,30 @@
+.empty-state {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: start;
+  padding: 1.25rem 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.05rem;
+  }
+
+  p {
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  a {
+    margin-top: 0.35rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}

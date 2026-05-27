@@ -8,13 +8,15 @@ import {
 } from '../../core/models/match-prediction.model';
 import { MatchService } from '../../core/services/match.service';
 import { PredictionService } from '../../core/services/prediction.service';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-match-predictions-page',
   standalone: true,
-  imports: [MatchCardComponent],
+  imports: [EmptyStateComponent, LoadingSpinnerComponent, MatchCardComponent],
   templateUrl: './match-predictions-page.component.html',
   styleUrl: './match-predictions-page.component.scss'
 })

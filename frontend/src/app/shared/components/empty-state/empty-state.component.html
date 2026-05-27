@@ -1,0 +1,9 @@
+<section class="empty-state">
+  <h2>{{ title }}</h2>
+  @if (message) {
+    <p>{{ message }}</p>
+  }
+  @if (actionLabel && actionLink) {
+    <a [routerLink]="actionLink">{{ actionLabel }}</a>
+  }
+</section>

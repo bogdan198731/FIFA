@@ -428,10 +428,22 @@ After running the backend and frontend (see sections 2 and 3 above):
       points, unanswered questions, upcoming matches, recent results, and links
       to predictions/questions.
 
+## Phase 11 completion criteria
+
+- [x] Shared loading spinner and empty-state components added under
+      `frontend/src/app/shared/components`.
+- [x] Leaderboard, match predictions, and tournament questions use consistent
+      loading, empty, and friendly error states.
+- [x] Match and question cards have clearer locked-state styling and improved
+      mobile layout.
+- [x] Current user highlighting in the leaderboard is more visible.
+- [x] Global theme tokens now include shared soft shadow/focus styling for
+      cleaner light and dark mode behavior.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 11** - surfacing detailed score history and user-facing points breakdowns.
+Next up: **Phase 12** - surfacing detailed score history and user-facing points breakdowns.

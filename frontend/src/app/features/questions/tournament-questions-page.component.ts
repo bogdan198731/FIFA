@@ -7,13 +7,15 @@ import {
   TournamentAnswer,
   TournamentQuestion
 } from '../../core/models/tournament-question.model';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-tournament-questions-page',
   standalone: true,
-  imports: [QuestionFormComponent],
+  imports: [EmptyStateComponent, LoadingSpinnerComponent, QuestionFormComponent],
   templateUrl: './tournament-questions-page.component.html',
   styleUrl: './tournament-questions-page.component.scss'
 })

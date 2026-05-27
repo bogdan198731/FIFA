@@ -9,14 +9,17 @@
 
   @switch (state()) {
     @case ('loading') {
-      <p class="muted">Loading...</p>
+      <app-loading-spinner label="Loading matches" />
     }
     @case ('error') {
-      <p class="error" role="alert">{{ errorMessage() }}</p>
+      <p class="error" role="alert">{{ errorMessage() }} Your saved predictions are safe.</p>
     }
     @case ('ready') {
       @if (matches().length === 0) {
-        <p class="muted">No matches have been published yet.</p>
+        <app-empty-state
+          title="No matches yet"
+          message="Once fixtures are published, this page will show every match you can predict."
+        />
       } @else {
         <p class="muted summary">
           {{ openCount() }} of {{ matches().length }} still open.
