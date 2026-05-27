@@ -30,22 +30,55 @@ This phase establishes the technical base of the application. It delivers:
 
 ---
 
+## Phase 2 — Database Models
+
+This phase defines the persistent core of the application.
+
+- JPA entities: `User`, `Match`, `Prediction`, `TournamentQuestion`,
+  `TournamentAnswer`.
+- Spring Data repositories for each entity (e.g. `UserRepository`,
+  `MatchRepository`, …).
+- Enums: `Role` (USER / ADMIN), `MatchType` (REGULAR / KNOCKOUT),
+  `MatchStage` (GROUP / ROUND_OF_16 / QUARTER_FINAL / SEMI_FINAL /
+  THIRD_PLACE / FINAL).
+- Schema is owned by **Flyway** — see
+  [backend/src/main/resources/db/migration](backend/src/main/resources/db/migration).
+  JPA is configured with `ddl-auto: validate`, so the entities must match the
+  migrations.
+- `V2__seed_data.sql` seeds three users (one admin), six matches, and three
+  tournament questions so the rest of the app has something to render.
+
+Migrations run automatically on backend startup. To re-seed a clean DB:
+
+```sql
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+```
+
+then start the backend again — Flyway will rebuild from V1.
+
+---
+
 ## Repository layout
 
 ```
 .
 ├── backend/                 Spring Boot service
 │   ├── pom.xml
-│   └── src/main/java/com/example/worldcup
-│       ├── WorldcupApplication.java
-│       ├── auth/            (placeholder — Phase 2)
-│       ├── user/            (placeholder)
-│       ├── match/           (placeholder)
-│       ├── prediction/      (placeholder)
-│       ├── question/        (placeholder)
-│       ├── leaderboard/     (placeholder)
-│       ├── admin/           (placeholder)
-│       └── common/          CorsConfig, HealthController
+│   └── src/main
+│       ├── java/com/example/worldcup
+│       │   ├── WorldcupApplication.java
+│       │   ├── auth/            (placeholder — later phase)
+│       │   ├── user/            User, UserRepository, Role
+│       │   ├── match/           Match, MatchRepository, MatchType, MatchStage
+│       │   ├── prediction/      Prediction, PredictionRepository
+│       │   ├── question/        TournamentQuestion(+Repo), TournamentAnswer(+Repo)
+│       │   ├── leaderboard/     (placeholder)
+│       │   ├── admin/           (placeholder)
+│       │   └── common/          CorsConfig, HealthController
+│       └── resources
+│           ├── application.yml
+│           └── db/migration/    Flyway scripts (V1 schema, V2 seed)
 └── frontend/                Angular 18 app
     └── src/app
         ├── core/            singleton services & models (HealthService)
@@ -86,7 +119,7 @@ You can override any of these via environment variables (see
 - `DB_URL` — JDBC URL (default `jdbc:postgresql://localhost:5432/worldcup`)
 - `DB_USERNAME`
 - `DB_PASSWORD`
-- `JPA_DDL_AUTO` — `update` in dev, `validate` in prod
+- `JPA_DDL_AUTO` — `validate` (Flyway owns the schema)
 - `SPRING_PROFILES_ACTIVE` — `dev` (default) or `prod`
 - `CORS_ALLOWED_ORIGINS` — comma-separated, default `http://localhost:4200`
 
@@ -152,4 +185,13 @@ npm test             # karma + jasmine unit tests
 - [x] Backend connects to PostgreSQL (configured via `application.yml`).
 - [x] Angular calls the backend health endpoint and renders the response.
 
-Next up: **Phase 2 — Authentication** (JWT, user registration, login).
+## Phase 2 completion criteria
+
+- [x] JPA entity classes for User, Match, Prediction, TournamentQuestion,
+      TournamentAnswer.
+- [x] Repository interfaces for each entity.
+- [x] Flyway migrations create the schema on startup.
+- [x] Seed data is loaded for users, matches, and tournament questions.
+
+Next up: **Phase 3** — API surface for matches, predictions, and tournament
+questions.
