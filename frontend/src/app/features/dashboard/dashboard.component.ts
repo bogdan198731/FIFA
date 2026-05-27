@@ -1,27 +1,39 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
-import { HealthService } from '../../core/services/health.service';
-import { HealthStatus } from '../../core/models/health-status.model';
+import { DashboardService } from '../../core/services/dashboard.service';
+import { DashboardSummary } from '../../core/models/dashboard.model';
+
+type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  imports: [DatePipe, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
   private readonly auth = inject(AuthService);
-  private readonly healthService = inject(HealthService);
+  private readonly dashboardService = inject(DashboardService);
 
   readonly currentUser = this.auth.currentUser;
-  readonly health = signal<HealthStatus | null>(null);
-  readonly healthError = signal<string | null>(null);
+  readonly dashboard = signal<DashboardSummary | null>(null);
+  readonly state = signal<LoadState>('loading');
+  readonly errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.healthService.check().subscribe({
-      next: (status) => this.health.set(status),
-      error: (err) => this.healthError.set(err?.message ?? 'Backend unreachable')
+    this.dashboardService.get().subscribe({
+      next: (dashboard) => {
+        this.dashboard.set(dashboard);
+        this.state.set('ready');
+      },
+      error: (err) => {
+        this.errorMessage.set(err?.error?.message ?? 'Could not load dashboard.');
+        this.state.set('error');
+      }
     });
   }
 }

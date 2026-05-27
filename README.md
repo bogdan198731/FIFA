@@ -415,10 +415,23 @@ After running the backend and frontend (see sections 2 and 3 above):
 - [x] Angular admin route `/admin/recalculate-scores` provides an all-scores
       action and per-match recalculation actions.
 
+## Phase 10 completion criteria
+
+- [x] `GET /api/dashboard` returns the signed-in user's current rank, total
+      points, upcoming matches, recent prediction results, and unanswered
+      tournament question count.
+- [x] Dashboard rank is based on the same leaderboard ranking logic as
+      `/api/leaderboard`.
+- [x] Upcoming matches and recent scored predictions are capped for concise
+      display.
+- [x] Angular `/dashboard` is now the main post-login summary page with rank,
+      points, unanswered questions, upcoming matches, recent results, and links
+      to predictions/questions.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 10** - surfacing awarded points to users and expanding score history.
+Next up: **Phase 11** - surfacing detailed score history and user-facing points breakdowns.

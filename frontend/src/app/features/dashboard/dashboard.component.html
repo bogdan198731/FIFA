@@ -1,21 +1,84 @@
 <section class="page">
-  <header>
+  <header class="header">
     <h1>Welcome, {{ currentUser()?.username }}</h1>
-    <p class="muted">
-      Predictions and tournament questions will appear here once the next
-      phases land. For now, this is the authenticated landing page.
-    </p>
+    <p class="muted">Your current pool snapshot and the next things to do.</p>
   </header>
 
-  <article class="card">
-    <h2>Backend health</h2>
-    @if (health(); as h) {
-      <p class="status status--up"><strong>{{ h.status }}</strong> — {{ h.service }}</p>
-      <p class="timestamp">Checked at {{ h.timestamp }}</p>
-    } @else if (healthError()) {
-      <p class="status status--down">DOWN — {{ healthError() }}</p>
-    } @else {
-      <p class="status">Checking…</p>
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading dashboard...</p>
     }
-  </article>
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+    @case ('ready') {
+      @if (dashboard(); as d) {
+        <section class="cards">
+          <article class="card stat">
+            <span>Current rank</span>
+            <strong>{{ d.currentRank ? ('#' + d.currentRank) : '-' }}</strong>
+          </article>
+          <article class="card stat">
+            <span>Total points</span>
+            <strong>{{ d.totalPoints }}</strong>
+          </article>
+          <article class="card stat">
+            <span>Unanswered questions</span>
+            <strong>{{ d.unansweredTournamentQuestionsCount }}</strong>
+            <a routerLink="/tournament-questions">Open questions</a>
+          </article>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Upcoming matches</h2>
+            <a routerLink="/predictions">Make predictions</a>
+          </div>
+          @if (d.upcomingMatches.length === 0) {
+            <p class="muted">No upcoming matches are available.</p>
+          } @else {
+            <div class="list">
+              @for (match of d.upcomingMatches; track match.id) {
+                <article class="row">
+                  <div>
+                    <strong>{{ match.homeTeam }} vs {{ match.awayTeam }}</strong>
+                    <span>{{ match.stage.replaceAll('_', ' ') }} - {{ match.kickoffAt | date:'medium' }}</span>
+                  </div>
+                  <span class="pill">{{ match.locked ? 'Locked' : 'Open' }}</span>
+                </article>
+              }
+            </div>
+          }
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <h2>Recent prediction results</h2>
+            <a routerLink="/leaderboard">Leaderboard</a>
+          </div>
+          @if (d.recentPredictionResults.length === 0) {
+            <p class="muted">No scored predictions yet.</p>
+          } @else {
+            <div class="list">
+              @for (result of d.recentPredictionResults; track result.predictionId) {
+                <article class="row result-row">
+                  <div>
+                    <strong>{{ result.homeTeam }} vs {{ result.awayTeam }}</strong>
+                    <span>
+                      Predicted {{ result.predictedHomeScore }}-{{ result.predictedAwayScore }},
+                      actual {{ result.actualHomeScore }}-{{ result.actualAwayScore }}
+                      @if (result.actualQualifiedTeam) {
+                        ({{ result.actualQualifiedTeam }} qualified)
+                      }
+                    </span>
+                  </div>
+                  <span class="points">+{{ result.pointsAwarded }}</span>
+                </article>
+              }
+            </div>
+          }
+        </section>
+      }
+    }
+  }
 </section>
