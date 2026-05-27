@@ -51,6 +51,10 @@ public class Match {
     @Column(nullable = false)
     private boolean finished;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "prediction_lock_override", length = 10)
+    private PredictionLockOverride predictionLockOverride;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -150,6 +154,24 @@ public class Match {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public PredictionLockOverride getPredictionLockOverride() {
+        return predictionLockOverride;
+    }
+
+    public void setPredictionLockOverride(PredictionLockOverride predictionLockOverride) {
+        this.predictionLockOverride = predictionLockOverride;
+    }
+
+    public boolean isPredictionLocked(Instant now) {
+        if (predictionLockOverride == PredictionLockOverride.LOCKED) {
+            return true;
+        }
+        if (predictionLockOverride == PredictionLockOverride.UNLOCKED) {
+            return false;
+        }
+        return !now.isBefore(kickoffAt);
     }
 
     public Instant getCreatedAt() {

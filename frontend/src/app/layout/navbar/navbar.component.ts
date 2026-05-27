@@ -15,6 +15,7 @@ export class NavbarComponent {
 
   readonly currentUser = this.auth.currentUser;
   readonly isAuthenticated = this.auth.isAuthenticated;
+  readonly isAdmin = this.auth.isAdmin;
   readonly menuOpen = signal(false);
 
   toggleMenu(): void {

@@ -1,0 +1,47 @@
+<form class="admin-form" [formGroup]="form" (ngSubmit)="save()">
+  <header class="form-header">
+    <div>
+      <h3>{{ match.homeTeam }} vs {{ match.awayTeam }}</h3>
+      <p>{{ match.stage.replaceAll('_', ' ') }} - {{ lockLabel(match) }}</p>
+    </div>
+    <div class="lock-actions">
+      <button type="button" class="secondary" (click)="lock()">Lock</button>
+      <button type="button" class="secondary" (click)="unlock()">Unlock</button>
+    </div>
+  </header>
+
+  <label class="check">
+    <input type="checkbox" formControlName="isFinished" />
+    <span>Finished</span>
+  </label>
+
+  <div class="grid result-grid">
+    <label>
+      <span>{{ match.homeTeam }}</span>
+      <input type="number" min="0" formControlName="homeScore" />
+    </label>
+    <label>
+      <span>{{ match.awayTeam }}</span>
+      <input type="number" min="0" formControlName="awayScore" />
+    </label>
+    @if (match.matchType === 'KNOCKOUT') {
+      <label>
+        <span>Qualified team</span>
+        <select formControlName="qualifiedTeam">
+          <option value="">Choose team</option>
+          <option [value]="match.homeTeam">{{ match.homeTeam }}</option>
+          <option [value]="match.awayTeam">{{ match.awayTeam }}</option>
+        </select>
+      </label>
+    }
+  </div>
+
+  <div class="actions">
+    <button type="submit" class="primary" [disabled]="submitting()">
+      {{ submitting() ? 'Saving...' : 'Save result' }}
+    </button>
+    @if (feedback()) {
+      <p class="feedback">{{ feedback() }}</p>
+    }
+  </div>
+</form>

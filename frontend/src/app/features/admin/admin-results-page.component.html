@@ -1,0 +1,22 @@
+<section class="admin-page">
+  <header class="header">
+    <h1>Admin results</h1>
+    <p>Enter final scores, qualified teams, and prediction lock overrides.</p>
+  </header>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading...</p>
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+    @case ('ready') {
+      <div class="list">
+        @for (match of matches(); track match.id) {
+          <app-result-form [match]="match" (changed)="replace($event)" />
+        }
+      </div>
+    }
+  }
+</section>

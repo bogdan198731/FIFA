@@ -83,9 +83,9 @@ public class PredictionService {
     }
 
     private void ensureNotLocked(Match match, Instant now) {
-        if (!now.isBefore(match.getKickoffAt())) {
+        if (match.isPredictionLocked(now)) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
-                    "This match is locked - kickoff time has passed");
+                    "This match is locked");
         }
     }
 

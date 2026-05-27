@@ -1,4 +1,5 @@
 export type MatchType = 'REGULAR' | 'KNOCKOUT';
+export type PredictionLockOverride = 'LOCKED' | 'UNLOCKED';
 
 export type MatchStage =
   | 'GROUP'
@@ -20,6 +21,7 @@ export interface Match {
   awayScore: number | null;
   knockoutWinner: string | null;
   finished: boolean;
+  predictionLockOverride: PredictionLockOverride | null;
   locked: boolean;
 }
 
@@ -45,4 +47,24 @@ export interface UpdatePredictionRequest {
   homeScore: number;
   awayScore: number;
   qualifiedTeam?: string | null;
+}
+
+export interface AdminMatchRequest {
+  homeTeam: string;
+  awayTeam: string;
+  kickoffTime: string;
+  venue?: string | null;
+  stage: MatchStage;
+  matchType: MatchType;
+  homeScore?: number | null;
+  awayScore?: number | null;
+  qualifiedTeam?: string | null;
+  isFinished: boolean;
+}
+
+export interface MatchResultRequest {
+  homeScore?: number | null;
+  awayScore?: number | null;
+  qualifiedTeam?: string | null;
+  isFinished: boolean;
 }

@@ -3,6 +3,7 @@ package com.example.worldcup.match.dto;
 import com.example.worldcup.match.Match;
 import com.example.worldcup.match.MatchStage;
 import com.example.worldcup.match.MatchType;
+import com.example.worldcup.match.PredictionLockOverride;
 
 import java.time.Instant;
 
@@ -18,6 +19,7 @@ public record MatchResponse(
         Integer awayScore,
         String knockoutWinner,
         boolean finished,
+        PredictionLockOverride predictionLockOverride,
         boolean locked
 ) {
 
@@ -34,7 +36,8 @@ public record MatchResponse(
                 match.getAwayScore(),
                 match.getKnockoutWinner(),
                 match.isFinished(),
-                !now.isBefore(match.getKickoffAt())
+                match.getPredictionLockOverride(),
+                match.isPredictionLocked(now)
         );
     }
 }

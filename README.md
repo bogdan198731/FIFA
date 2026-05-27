@@ -389,10 +389,24 @@ After running the backend and frontend (see sections 2 and 3 above):
 - [x] Scoring logic is independent from controllers and covered by focused
       unit tests.
 
+## Phase 8 completion criteria
+
+- [x] Admin-only backend endpoints for creating, editing, deleting, and
+      resulting matches under `/api/admin/matches`.
+- [x] Admin can set kickoff time, stage, match type, final score, finished
+      state, and knockout qualified team.
+- [x] Knockout results require the qualified team to be one of the match teams.
+- [x] Manual prediction lock overrides are stored on matches and respected by
+      prediction submission/update logic.
+- [x] Angular admin routes `/admin/matches` and `/admin/results` are protected
+      by the admin guard.
+- [x] Admin match form and result form support fixture management, result entry,
+      and manual lock/unlock actions.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 8** - applying scores to predictions and updating the leaderboard.
+Next up: **Phase 9** - applying scores to predictions and updating the leaderboard.

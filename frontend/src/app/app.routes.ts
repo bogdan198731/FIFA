@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { adminGuard, authGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -54,6 +54,22 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/predictions/match-predictions-page.component').then(
         (m) => m.MatchPredictionsPageComponent
+      )
+  },
+  {
+    path: 'admin/matches',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-matches-page.component').then(
+        (m) => m.AdminMatchesPageComponent
+      )
+  },
+  {
+    path: 'admin/results',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-results-page.component').then(
+        (m) => m.AdminResultsPageComponent
       )
   },
   { path: '**', redirectTo: '' }

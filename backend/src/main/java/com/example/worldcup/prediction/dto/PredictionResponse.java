@@ -22,7 +22,7 @@ public record PredictionResponse(
                 prediction.getPredictedHomeScore(),
                 prediction.getPredictedAwayScore(),
                 prediction.getPredictedWinner(),
-                !now.isBefore(prediction.getMatch().getKickoffAt()),
+                prediction.getMatch().isPredictionLocked(now),
                 prediction.getCreatedAt(),
                 prediction.getUpdatedAt()
         );
