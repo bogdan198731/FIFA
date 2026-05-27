@@ -1,9 +1,8 @@
 .page {
   max-width: 560px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color: #1f2937;
+  margin: 0 auto;
+  color: var(--text);
+  font-family: var(--font-sans);
 
   h1 {
     margin: 0 0 1.5rem;
@@ -15,20 +14,20 @@
   grid-template-columns: 120px 1fr;
   gap: 0.6rem 1rem;
   padding: 1.25rem 1.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--surface);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   margin: 0 0 1.5rem;
 
   dt {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 0.9rem;
   }
 
   dd {
     margin: 0;
-    color: #1f2937;
+    color: var(--text);
   }
 }
 
@@ -36,27 +35,28 @@
   display: inline-block;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 0.8rem;
   font-weight: 600;
 
   &--admin {
-    background: #fee2e2;
-    color: #991b1b;
+    background: color-mix(in srgb, var(--danger) 18%, transparent);
+    color: var(--danger);
   }
 }
 
 .danger {
   padding: 0.55rem 1rem;
-  border: 1px solid #fca5a5;
+  border: 1px solid var(--danger);
   border-radius: 8px;
-  background: #ffffff;
-  color: #b91c1c;
+  background: transparent;
+  color: var(--danger);
   font-size: 0.95rem;
   cursor: pointer;
+  transition: background 0.15s ease;
 
   &:hover {
-    background: #fef2f2;
+    background: color-mix(in srgb, var(--danger) 10%, transparent);
   }
 }

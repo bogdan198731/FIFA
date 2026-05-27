@@ -39,6 +39,9 @@ public class User {
     @Column(nullable = false, length = 20)
     private Role role;
 
+    @Column(name = "total_points", nullable = false)
+    private long totalPoints;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -50,6 +53,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.totalPoints = 0L;
         this.createdAt = Instant.now();
     }
 
@@ -87,6 +91,14 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public long getTotalPoints() {
+        return totalPoints;
+    }
+
+    public void setTotalPoints(long totalPoints) {
+        this.totalPoints = totalPoints;
     }
 
     public Instant getCreatedAt() {

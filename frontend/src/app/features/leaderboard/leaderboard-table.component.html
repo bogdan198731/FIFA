@@ -1,0 +1,46 @@
+<section class="page">
+  <header class="header">
+    <h1>Leaderboard</h1>
+    <p class="muted">Ranked by total points. Tied scores share a rank.</p>
+  </header>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading…</p>
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+    @case ('ready') {
+      @if (entries().length === 0) {
+        <p class="muted">No players yet.</p>
+      } @else {
+        <div class="table-wrap">
+          <table class="leaderboard">
+            <thead>
+              <tr>
+                <th scope="col" class="rank">#</th>
+                <th scope="col">Player</th>
+                <th scope="col" class="points">Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of entries(); track entry.userId) {
+                <tr [class.is-self]="entry.userId === currentUserId()">
+                  <td class="rank">{{ entry.rank }}</td>
+                  <td>
+                    <span class="name">{{ entry.username }}</span>
+                    @if (entry.userId === currentUserId()) {
+                      <span class="you">you</span>
+                    }
+                  </td>
+                  <td class="points">{{ entry.totalPoints }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  }
+</section>

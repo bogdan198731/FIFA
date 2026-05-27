@@ -1,0 +1,35 @@
+<nav class="navbar" [class.navbar--open]="menuOpen()">
+  <a class="brand" routerLink="/" (click)="closeMenu()">World Cup Pool</a>
+
+  <button
+    type="button"
+    class="menu-toggle"
+    [attr.aria-expanded]="menuOpen()"
+    aria-label="Toggle navigation"
+    (click)="toggleMenu()"
+  >
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
+  <div class="links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">Home</a>
+    <a routerLink="/leaderboard" routerLinkActive="active" (click)="closeMenu()">Leaderboard</a>
+
+    @if (isAuthenticated()) {
+      <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()">Dashboard</a>
+      <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">Profile</a>
+    }
+  </div>
+
+  <div class="actions">
+    @if (isAuthenticated()) {
+      <span class="username">{{ currentUser()?.username }}</span>
+      <button type="button" class="ghost" (click)="logout()">Sign out</button>
+    } @else {
+      <a class="ghost" routerLink="/login" (click)="closeMenu()">Sign in</a>
+      <a class="cta" routerLink="/register" (click)="closeMenu()">Register</a>
+    }
+  </div>
+</nav>

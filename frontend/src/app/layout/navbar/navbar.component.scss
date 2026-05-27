@@ -1,0 +1,142 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-sans);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.menu-toggle {
+  display: none;
+  margin-left: auto;
+  width: 40px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+
+  .bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    margin: 4px auto;
+    background: var(--text);
+    border-radius: 1px;
+  }
+}
+
+.links {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: 1rem;
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  a:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  a.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+
+  .username {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .ghost {
+    padding: 0.4rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .ghost:hover {
+    background: var(--surface-2);
+  }
+
+  .cta {
+    padding: 0.4rem 0.95rem;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--on-accent);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background 0.15s ease;
+  }
+
+  .cta:hover {
+    background: var(--accent-strong);
+  }
+}
+
+@media (max-width: 720px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .links,
+  .actions {
+    display: none;
+    flex-basis: 100%;
+    margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+
+  .actions {
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+  }
+
+  .navbar--open .links,
+  .navbar--open .actions {
+    display: flex;
+  }
+
+  .actions .username {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .actions .ghost,
+  .actions .cta {
+    text-align: center;
+  }
+}

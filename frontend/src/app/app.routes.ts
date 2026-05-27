@@ -3,7 +3,19 @@ import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./features/home/home.component').then((m) => m.HomeComponent)
+  },
+  {
+    path: 'leaderboard',
+    loadComponent: () =>
+      import('./features/leaderboard/leaderboard-table.component').then(
+        (m) => m.LeaderboardTableComponent
+      )
+  },
   {
     path: 'login',
     canActivate: [guestGuard],
@@ -28,5 +40,5 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/profile/profile.component').then((m) => m.ProfileComponent)
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: '' }
 ];

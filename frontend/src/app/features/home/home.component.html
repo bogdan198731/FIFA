@@ -1,0 +1,43 @@
+<section class="hero">
+  <h1>Predict every match. Climb the leaderboard.</h1>
+  <p class="lead">
+    Pick the scoreline for each World Cup match, answer the tournament-wide
+    side bets, and compete with friends across the group stage and knockouts.
+  </p>
+
+  <div class="actions">
+    @if (isAuthenticated()) {
+      <a class="cta" routerLink="/dashboard">Go to dashboard</a>
+      <a class="ghost" routerLink="/leaderboard">View leaderboard</a>
+    } @else {
+      <a class="cta" routerLink="/register">Create a free account</a>
+      <a class="ghost" routerLink="/login">I already have one</a>
+    }
+  </div>
+</section>
+
+<section class="cards">
+  <article class="card">
+    <h2>Match predictions</h2>
+    <p>
+      Guess the final score of every group-stage and knockout fixture. Closer
+      guesses earn more points.
+    </p>
+  </article>
+
+  <article class="card">
+    <h2>Tournament questions</h2>
+    <p>
+      Lock in your picks for tournament-wide questions — winner, top scorer,
+      and more — before the deadline.
+    </p>
+  </article>
+
+  <article class="card">
+    <h2>Live leaderboard</h2>
+    <p>
+      Watch your rank move as results come in. Tied scores share a place,
+      same as a real pool.
+    </p>
+  </article>
+</section>

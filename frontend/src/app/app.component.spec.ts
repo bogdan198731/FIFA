@@ -22,7 +22,7 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('renders the header brand', () => {
+  it('renders the navbar brand', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const brand = (fixture.nativeElement as HTMLElement).querySelector('.brand');

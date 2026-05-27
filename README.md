@@ -89,8 +89,49 @@ JWT-based auth with BCrypt password hashing and role-based access control.
   attaches the `Authorization` header to every request and signs the user out
   on a `401` response.
 - A simple header layout
-  ([`HeaderComponent`](frontend/src/app/layout/header/header.component.ts))
+  ([`NavbarComponent`](frontend/src/app/layout/navbar/navbar.component.ts))
   switches between sign-in / register links and a username + sign-out button.
+
+---
+
+## Phase 4 — Public Pages
+
+Public, mobile-friendly site with a home page, navbar, layout shell, and the
+first leaderboard view.
+
+**Backend**
+
+- `GET /api/leaderboard` (public) — returns
+  `[{rank, userId, username, totalPoints}, …]`, sorted by points desc, with
+  ties sharing a rank.
+  ([`LeaderboardController`](backend/src/main/java/com/example/worldcup/leaderboard/LeaderboardController.java),
+  [`LeaderboardService`](backend/src/main/java/com/example/worldcup/leaderboard/LeaderboardService.java))
+- New column `users.total_points BIGINT NOT NULL DEFAULT 0` added by
+  [`V3__add_leaderboard_points.sql`](backend/src/main/resources/db/migration/V3__add_leaderboard_points.sql);
+  seed users get demo points so the page renders before any predictions are
+  scored. The scoring engine in a later phase will own writes to this column.
+- `/api/leaderboard` added to the `permitAll` list in `SecurityConfig`.
+
+**Frontend**
+
+- Routes: `/` (home), `/leaderboard` (both public) alongside the auth and
+  user routes from Phase 3.
+- [`MainLayoutComponent`](frontend/src/app/layout/main-layout/main-layout.component.ts)
+  wraps every route with the navbar, a centred content area, and a footer.
+- [`NavbarComponent`](frontend/src/app/layout/navbar/navbar.component.ts)
+  collapses to a hamburger menu under 720 px and toggles open/closed via a
+  signal. Active link styling uses `routerLinkActive`.
+- [`HomeComponent`](frontend/src/app/features/home/home.component.ts) shows a
+  hero CTA (register vs. dashboard depending on auth) and three feature
+  cards.
+- [`LeaderboardTableComponent`](frontend/src/app/features/leaderboard/leaderboard-table.component.ts)
+  fetches `/api/leaderboard`, renders the table, and highlights the signed-in
+  user with a "you" badge.
+- Global theming variables live in
+  [`styles.scss`](frontend/src/styles.scss) and switch automatically under
+  `prefers-color-scheme: dark`. Existing pages (login, register, dashboard,
+  profile) were updated to consume the variables so dark mode applies
+  uniformly.
 
 Migrations run automatically on backend startup. To re-seed a clean DB:
 
@@ -260,4 +301,11 @@ After running the backend and frontend (see sections 2 and 3 above):
 3. `/profile` displays your account and a sign-out button. Signing out clears
    the JWT and bounces you back to `/login`.
 
-Next up: **Phase 4** — match listings and prediction submission.
+## Phase 4 completion criteria
+
+- [x] `GET /api/leaderboard` returns users ordered by `totalPoints`.
+- [x] `/` home page and `/leaderboard` public route.
+- [x] Navbar + main-layout components with mobile-friendly hamburger menu.
+- [x] Automatic dark-mode support via `prefers-color-scheme`.
+
+Next up: **Phase 5** — match listings and prediction submission.
