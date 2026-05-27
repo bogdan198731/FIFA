@@ -29,6 +29,31 @@
           </article>
         </section>
 
+        <section class="section stats-section">
+          <div class="section-header">
+            <h2>Prediction statistics</h2>
+            <a routerLink="/predictions">Review picks</a>
+          </div>
+          <div class="stats-grid">
+            <div>
+              <strong>{{ d.predictionStatistics.totalPredictions }}</strong>
+              <span>total picks</span>
+            </div>
+            <div>
+              <strong>{{ d.predictionStatistics.scoredPredictions }}</strong>
+              <span>scored</span>
+            </div>
+            <div>
+              <strong>{{ d.predictionStatistics.averagePointsPerScoredPrediction | number:'1.1-1' }}</strong>
+              <span>avg points</span>
+            </div>
+            <div>
+              <strong>{{ d.predictionStatistics.bestPredictionPoints }}</strong>
+              <span>best pick</span>
+            </div>
+          </div>
+        </section>
+
         <section class="section">
           <div class="section-header">
             <h2>Upcoming matches</h2>
@@ -41,7 +66,10 @@
               @for (match of d.upcomingMatches; track match.id) {
                 <article class="row">
                   <div>
-                    <strong>{{ match.homeTeam }} vs {{ match.awayTeam }}</strong>
+                    <strong>
+                      {{ teamFlag(match.homeTeam) }} {{ match.homeTeam }} vs
+                      {{ teamFlag(match.awayTeam) }} {{ match.awayTeam }}
+                    </strong>
                     <span>{{ match.stage.replaceAll('_', ' ') }} - {{ match.kickoffAt | date:'medium' }}</span>
                   </div>
                   <span class="pill">{{ match.locked ? 'Locked' : 'Open' }}</span>
@@ -63,7 +91,10 @@
               @for (result of d.recentPredictionResults; track result.predictionId) {
                 <article class="row result-row">
                   <div>
-                    <strong>{{ result.homeTeam }} vs {{ result.awayTeam }}</strong>
+                    <strong>
+                      {{ teamFlag(result.homeTeam) }} {{ result.homeTeam }} vs
+                      {{ teamFlag(result.awayTeam) }} {{ result.awayTeam }}
+                    </strong>
                     <span>
                       Predicted {{ result.predictedHomeScore }}-{{ result.predictedAwayScore }},
                       actual {{ result.actualHomeScore }}-{{ result.actualAwayScore }}

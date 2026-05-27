@@ -440,6 +440,18 @@ After running the backend and frontend (see sections 2 and 3 above):
 - [x] Global theme tokens now include shared soft shadow/focus styling for
       cleaner light and dark mode behavior.
 
+## Phase 13 nice-to-have additions
+
+- [x] Prediction statistics are returned by `GET /api/dashboard`, including
+      total picks, scored picks, pending picks, prediction points, average
+      points, and best pick.
+- [x] Dashboard displays a compact prediction statistics section with a link
+      back to predictions.
+- [x] Lightweight team flag markers are shown on dashboard match rows and match
+      prediction cards for seeded teams.
+- [ ] Friends leaderboard, weekly leaderboard, email reminders, sharing, and
+      live leaderboard updates remain future infrastructure/product work.
+
 ### Tip
 
 The seeded questions have deadlines in mid-2026. To exercise the locked state

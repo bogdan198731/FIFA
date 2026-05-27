@@ -2,6 +2,7 @@ package com.example.worldcup.dashboard;
 
 import com.example.worldcup.common.ApiException;
 import com.example.worldcup.dashboard.dto.DashboardResponse;
+import com.example.worldcup.dashboard.dto.PredictionStatistics;
 import com.example.worldcup.dashboard.dto.RecentPredictionResult;
 import com.example.worldcup.leaderboard.LeaderboardEntry;
 import com.example.worldcup.leaderboard.LeaderboardService;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,13 +61,16 @@ public class DashboardService {
                 .map(LeaderboardEntry::rank)
                 .orElse(null);
 
+        List<Prediction> userPredictions = predictionRepository.findByUserId(userId);
+        PredictionStatistics statistics = buildPredictionStatistics(userPredictions);
+
         var upcomingMatches = matchRepository.findByFinishedFalseAndKickoffAtAfterOrderByKickoffAtAsc(now)
                 .stream()
                 .limit(5)
                 .map(match -> MatchResponse.from(match, now))
                 .toList();
 
-        var recentResults = predictionRepository.findByUserId(userId).stream()
+        var recentResults = userPredictions.stream()
                 .filter(prediction -> prediction.getMatch().isFinished())
                 .sorted(Comparator.comparing((Prediction p) -> p.getMatch().getKickoffAt()).reversed())
                 .limit(5)
@@ -82,9 +87,35 @@ public class DashboardService {
         return new DashboardResponse(
                 rank,
                 user.getTotalPoints(),
+                statistics,
                 upcomingMatches,
                 recentResults,
                 unansweredCount
+        );
+    }
+
+    private PredictionStatistics buildPredictionStatistics(List<Prediction> predictions) {
+        int total = predictions.size();
+        int scored = 0;
+        int points = 0;
+        int best = 0;
+
+        for (Prediction prediction : predictions) {
+            if (prediction.getMatch().isFinished()) {
+                scored++;
+                points += prediction.getPointsAwarded();
+                best = Math.max(best, prediction.getPointsAwarded());
+            }
+        }
+
+        double average = scored == 0 ? 0.0 : (double) points / scored;
+        return new PredictionStatistics(
+                total,
+                scored,
+                total - scored,
+                points,
+                average,
+                best
         );
     }
 }

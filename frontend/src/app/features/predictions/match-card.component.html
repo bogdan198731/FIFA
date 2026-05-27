@@ -2,7 +2,11 @@
   <header class="match-header">
     <div>
       <p class="stage">{{ match.stage.replaceAll('_', ' ') }}</p>
-      <h3>{{ match.homeTeam }} vs {{ match.awayTeam }}</h3>
+      <h3>
+        <span class="team">{{ teamFlag(match.homeTeam) }} {{ match.homeTeam }}</span>
+        <span class="versus">vs</span>
+        <span class="team">{{ teamFlag(match.awayTeam) }} {{ match.awayTeam }}</span>
+      </h3>
     </div>
     <div class="meta">
       <span>{{ match.kickoffAt | date:'medium' }}</span>

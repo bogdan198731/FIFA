@@ -1,17 +1,18 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { DashboardSummary } from '../../core/models/dashboard.model';
+import { teamFlag } from '../../shared/team-flags';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, DecimalPipe, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -23,6 +24,7 @@ export class DashboardComponent implements OnInit {
   readonly dashboard = signal<DashboardSummary | null>(null);
   readonly state = signal<LoadState>('loading');
   readonly errorMessage = signal<string | null>(null);
+  readonly teamFlag = teamFlag;
 
   ngOnInit(): void {
     this.dashboardService.get().subscribe({

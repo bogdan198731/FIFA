@@ -7,6 +7,7 @@ import java.util.List;
 public record DashboardResponse(
         Integer currentRank,
         long totalPoints,
+        PredictionStatistics predictionStatistics,
         List<MatchResponse> upcomingMatches,
         List<RecentPredictionResult> recentPredictionResults,
         long unansweredTournamentQuestionsCount

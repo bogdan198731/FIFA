@@ -18,6 +18,7 @@ import {
   MatchPrediction
 } from '../../core/models/match-prediction.model';
 import { PredictionService } from '../../core/services/prediction.service';
+import { teamFlag } from '../../shared/team-flags';
 
 type FeedbackKind = 'success' | 'error';
 
@@ -47,6 +48,7 @@ export class MatchCardComponent implements OnChanges {
 
   readonly submitting = signal(false);
   readonly feedback = signal<{ kind: FeedbackKind; message: string } | null>(null);
+  readonly teamFlag = teamFlag;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['prediction'] || changes['match']) {

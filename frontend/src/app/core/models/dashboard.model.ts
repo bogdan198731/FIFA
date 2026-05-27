@@ -20,7 +20,17 @@ export interface RecentPredictionResult {
 export interface DashboardSummary {
   currentRank: number | null;
   totalPoints: number;
+  predictionStatistics: PredictionStatistics;
   upcomingMatches: Match[];
   recentPredictionResults: RecentPredictionResult[];
   unansweredTournamentQuestionsCount: number;
+}
+
+export interface PredictionStatistics {
+  totalPredictions: number;
+  scoredPredictions: number;
+  pendingPredictions: number;
+  totalPredictionPoints: number;
+  averagePointsPerScoredPrediction: number;
+  bestPredictionPoints: number;
 }

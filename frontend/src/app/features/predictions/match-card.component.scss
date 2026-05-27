@@ -19,10 +19,20 @@
   flex-wrap: wrap;
 
   h3 {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    flex-wrap: wrap;
     margin: 0.1rem 0 0;
     font-size: 1.1rem;
     color: var(--text);
   }
+}
+
+.versus {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .stage,
