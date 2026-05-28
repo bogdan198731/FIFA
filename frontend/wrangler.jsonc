@@ -16,7 +16,7 @@
   //   classic Pages `_redirects` SPA fallback — any unmatched route
   //   serves `index.html` so Angular's router can take over.
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "worldcup-pool",
+  "name": "fifa",
   "compatibility_date": "2025-01-01",
   "assets": {
     "directory": "./dist/frontend/browser",
