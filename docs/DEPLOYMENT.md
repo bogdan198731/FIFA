@@ -361,6 +361,7 @@ one before announcing final results.
 | Flyway error `Validate failed: Migrations have failed validation` | Someone edited a tracked migration's contents             | Don't edit applied migrations; add a new `V6__...sql` to fix forward.                                                            |
 | `401 Unauthorized` on every authed call after a redeploy | JWT secret changed                                         | Expected — sign in again to mint a token under the new secret.                                                                   |
 | Render build OOM / very slow                      | Free CPU + Maven warm-up                                   | Add `MAVEN_OPTS=-Xmx512m` env var; or upgrade to Starter for ~3× the build speed.                                                |
+| Docker build: `invalid local: resolve : lstat .../backend/backend: no such file or directory` | "Dockerfile Path" is relative to the context, not the repo | Set **Dockerfile Path** to `./Dockerfile` when **Docker Build Context Directory** is already `backend`. See §6 for the full pairing. |
 
 ---
 
@@ -388,8 +389,20 @@ nukes it if you want a clean slate.
 2. Change **Runtime** from `Java` to `Docker`.
 3. Clear the **Build Command** and **Start Command** — the Dockerfile owns
    both now.
-4. **Dockerfile path** → `backend/Dockerfile`.
-5. **Docker context** → `backend`.
+4. **Docker Build Context Directory**: `backend`
+5. **Dockerfile Path**: `./Dockerfile`
+
+   > ⚠ **Both fields look repo-rooted but they aren't.** "Docker Build
+   > Context Directory" is relative to the repo root; "Dockerfile Path" is
+   > relative to the *context* you just set above. If you put
+   > `backend/Dockerfile` here, Render concatenates them and the build
+   > fails with
+   > `error: invalid local: resolve : lstat /opt/render/project/src/backend/backend: no such file or directory`.
+   >
+   > Equivalent and also fine: leave the context blank (defaults to repo
+   > root) and set Dockerfile Path to `backend/Dockerfile`. Slightly larger
+   > build context, identical result.
+
 6. All the environment variables from §1.3 still apply — Docker doesn't
    change which env vars the app reads.
 7. Save. The next deploy builds the image (~5-7 min cold, ~2-3 min warm
