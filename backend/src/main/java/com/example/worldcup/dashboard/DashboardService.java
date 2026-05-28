@@ -4,8 +4,6 @@ import com.example.worldcup.common.ApiException;
 import com.example.worldcup.dashboard.dto.DashboardResponse;
 import com.example.worldcup.dashboard.dto.PredictionStatistics;
 import com.example.worldcup.dashboard.dto.RecentPredictionResult;
-import com.example.worldcup.leaderboard.LeaderboardEntry;
-import com.example.worldcup.leaderboard.LeaderboardService;
 import com.example.worldcup.match.MatchRepository;
 import com.example.worldcup.match.dto.MatchResponse;
 import com.example.worldcup.prediction.Prediction;
@@ -33,20 +31,17 @@ public class DashboardService {
     private final PredictionRepository predictionRepository;
     private final TournamentQuestionRepository questionRepository;
     private final TournamentAnswerRepository answerRepository;
-    private final LeaderboardService leaderboardService;
 
     public DashboardService(UserRepository userRepository,
                             MatchRepository matchRepository,
                             PredictionRepository predictionRepository,
                             TournamentQuestionRepository questionRepository,
-                            TournamentAnswerRepository answerRepository,
-                            LeaderboardService leaderboardService) {
+                            TournamentAnswerRepository answerRepository) {
         this.userRepository = userRepository;
         this.matchRepository = matchRepository;
         this.predictionRepository = predictionRepository;
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
-        this.leaderboardService = leaderboardService;
     }
 
     @Transactional(readOnly = true)
@@ -55,13 +50,13 @@ public class DashboardService {
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User no longer exists"));
         Instant now = Instant.now();
 
-        Integer rank = leaderboardService.getLeaderboard().stream()
-                .filter(entry -> entry.userId().equals(userId))
-                .findFirst()
-                .map(LeaderboardEntry::rank)
-                .orElse(null);
+        // Competition rank in one COUNT round-trip instead of walking the full
+        // leaderboard in memory. Ties share a rank.
+        int rank = (int) userRepository.countByTotalPointsGreaterThan(user.getTotalPoints()) + 1;
 
-        List<Prediction> userPredictions = predictionRepository.findByUserId(userId);
+        // JOIN FETCH the parent match so the stream below doesn't N+1 on every
+        // prediction.getMatch().isFinished() / .getKickoffAt().
+        List<Prediction> userPredictions = predictionRepository.findByUserIdFetchMatch(userId);
         PredictionStatistics statistics = buildPredictionStatistics(userPredictions);
 
         var upcomingMatches = matchRepository.findByFinishedFalseAndKickoffAtAfterOrderByKickoffAtAsc(now)

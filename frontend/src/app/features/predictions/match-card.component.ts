@@ -95,11 +95,14 @@ export class MatchCardComponent implements OnChanges {
       qualifiedTeam
     };
 
+    const sameTeam = (a: string | null | undefined, b: string | null | undefined) =>
+      (a ?? '').trim().toLowerCase() === (b ?? '').trim().toLowerCase();
+
     if (
       this.prediction &&
       payload.homeScore === this.prediction.homeScore &&
       payload.awayScore === this.prediction.awayScore &&
-      payload.qualifiedTeam === this.prediction.qualifiedTeam
+      sameTeam(payload.qualifiedTeam, this.prediction.qualifiedTeam)
     ) {
       this.feedback.set({ kind: 'success', message: 'No changes to save.' });
       return;

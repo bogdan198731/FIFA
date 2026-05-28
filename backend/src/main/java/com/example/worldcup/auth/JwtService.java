@@ -28,6 +28,11 @@ public class JwtService {
             @Value("${app.jwt.expiration-ms}") long expirationMs,
             @Value("${app.jwt.issuer}") String issuer
     ) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                    "app.jwt.secret is not configured. Set the JWT_SECRET " +
+                    "environment variable (at least 32 bytes) before starting the app.");
+        }
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMs = expirationMs;

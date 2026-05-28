@@ -9,6 +9,7 @@ import com.example.worldcup.match.MatchType;
 import com.example.worldcup.match.PredictionLockOverride;
 import com.example.worldcup.match.dto.MatchResponse;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +20,12 @@ import java.time.Instant;
 public class AdminMatchService {
 
     private final MatchRepository matchRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public AdminMatchService(MatchRepository matchRepository) {
+    public AdminMatchService(MatchRepository matchRepository,
+                             ApplicationEventPublisher eventPublisher) {
         this.matchRepository = matchRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -43,6 +47,7 @@ public class AdminMatchService {
         Match match = getMatch(matchId);
         applyIdentityFields(match, req);
         applyResultFields(match, req.homeScore(), req.awayScore(), req.qualifiedTeam(), req.isFinished());
+        eventPublisher.publishEvent(new MatchResultUpdatedEvent(match.getId()));
         return MatchResponse.from(match, Instant.now());
     }
 
@@ -56,6 +61,7 @@ public class AdminMatchService {
     public MatchResponse updateResult(Long matchId, MatchResultRequest req) {
         Match match = getMatch(matchId);
         applyResultFields(match, req.homeScore(), req.awayScore(), req.qualifiedTeam(), req.isFinished());
+        eventPublisher.publishEvent(new MatchResultUpdatedEvent(match.getId()));
         return MatchResponse.from(match, Instant.now());
     }
 

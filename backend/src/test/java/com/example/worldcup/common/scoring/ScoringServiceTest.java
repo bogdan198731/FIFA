@@ -108,6 +108,33 @@ class ScoringServiceTest {
         assertThat(scoringService.calculateRegularMatchPoints(prediction, match)).isZero();
     }
 
+    @Test
+    void regularMatchMarkedFinishedWithoutScoresStillAwardsZero() {
+        // Defensive: even if an admin somehow flips finished=true without
+        // entering scores, the scoring service must not NPE on null scores.
+        Match match = new Match("Brazil", "France", Instant.now(), MatchType.REGULAR, MatchStage.GROUP);
+        match.setFinished(true);
+        Prediction prediction = prediction(match, 2, 1);
+
+        assertThat(scoringService.calculateRegularMatchPoints(prediction, match)).isZero();
+    }
+
+    @Test
+    void knockoutMatchWithoutPredictedWinnerScoresExactScoreOnly() {
+        Match match = knockoutMatch(2, 2, "Brazil");
+        Prediction prediction = prediction(match, 2, 2, null);
+
+        assertThat(scoringService.calculateKnockoutMatchPoints(prediction, match)).isEqualTo(2);
+    }
+
+    @Test
+    void knockoutMatchWithoutPredictedWinnerAndWrongScoreIsZero() {
+        Match match = knockoutMatch(2, 2, "Brazil");
+        Prediction prediction = prediction(match, 1, 0, null);
+
+        assertThat(scoringService.calculateKnockoutMatchPoints(prediction, match)).isZero();
+    }
+
     private Match regularMatch(Integer homeScore, Integer awayScore) {
         Match match = new Match("Brazil", "France", Instant.now(), MatchType.REGULAR, MatchStage.GROUP);
         match.setHomeScore(homeScore);

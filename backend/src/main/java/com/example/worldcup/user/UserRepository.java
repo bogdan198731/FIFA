@@ -18,4 +18,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     List<User> findAllByOrderByTotalPointsDescUsernameAsc();
+
+    /**
+     * Number of users strictly ahead of the given point total. Used by the
+     * dashboard to compute "your rank" in a single query (competition rank:
+     * tied users share a rank).
+     */
+    long countByTotalPointsGreaterThan(long totalPoints);
 }

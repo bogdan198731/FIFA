@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
 
 import { QuestionFormComponent } from './question-form.component';
@@ -17,7 +17,8 @@ type LoadState = 'loading' | 'ready' | 'error';
   standalone: true,
   imports: [EmptyStateComponent, LoadingSpinnerComponent, QuestionFormComponent],
   templateUrl: './tournament-questions-page.component.html',
-  styleUrl: './tournament-questions-page.component.scss'
+  styleUrl: './tournament-questions-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TournamentQuestionsPageComponent implements OnInit {
   private readonly questionService = inject(QuestionService);

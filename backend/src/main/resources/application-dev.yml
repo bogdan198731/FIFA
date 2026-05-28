@@ -4,6 +4,13 @@ spring:
     hibernate:
       ddl-auto: validate
 
+# A throwaway secret good only for local development. Any non-dev profile
+# inherits the empty default from application.yml and will fail to boot
+# unless JWT_SECRET is set in the environment.
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-change-me-this-must-be-at-least-32-bytes-long-please}
+
 logging:
   level:
     com.example.worldcup: DEBUG
