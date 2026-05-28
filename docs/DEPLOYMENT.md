@@ -364,7 +364,60 @@ one before announcing final results.
 
 ---
 
-## 6. (Optional) Infrastructure as code
+## 6. (Optional) Deploy via Docker instead of native runtime
+
+The repo ships with Dockerfiles for both services and a `docker-compose.yml`
+for local end-to-end testing. Use this when you'd rather pin the build
+environment yourself than rely on Render's Java/Node detection.
+
+### Local: full stack in containers
+
+```bash
+docker compose up                    # postgres + backend
+docker compose --profile full up     # adds the nginx-served frontend on :8081
+```
+
+The compose file passes the dev defaults (`JWT_SECRET`, `CORS_ALLOWED_ORIGINS`
+pointing at localhost) so it boots without extra config. Postgres data
+persists in the `postgres-data` named volume — `docker compose down -v`
+nukes it if you want a clean slate.
+
+### Render: switch the backend to the Docker runtime
+
+1. Render Dashboard → `worldcup-api` → **Settings** → **Build & Deploy**.
+2. Change **Runtime** from `Java` to `Docker`.
+3. Clear the **Build Command** and **Start Command** — the Dockerfile owns
+   both now.
+4. **Dockerfile path** → `backend/Dockerfile`.
+5. **Docker context** → `backend`.
+6. All the environment variables from §1.3 still apply — Docker doesn't
+   change which env vars the app reads.
+7. Save. The next deploy builds the image (~5-7 min cold, ~2-3 min warm
+   thanks to layer caching) and runs it.
+
+The Dockerfile already honours Render's injected `$PORT`, runs as a
+non-root user, and ships a `HEALTHCHECK` against `/api/health` — so the
+"Health Check Path" setting in §1.2 becomes redundant but doesn't hurt.
+
+### Frontend: skip Cloudflare and run the nginx image somewhere
+
+If you want a Docker target for the frontend too — e.g. you're hosting on
+Fly.io, a VM, or alongside the backend on Render — `frontend/Dockerfile`
+produces a static nginx image with the same SPA fallback and cache
+headers as the Cloudflare config:
+
+```bash
+cd frontend
+docker build -t worldcup-frontend .
+docker run -p 8080:80 worldcup-frontend
+```
+
+The image is ~50 MB. Cloudflare Pages is still cheaper/faster for
+production unless you have a specific reason not to use it.
+
+---
+
+## 7. (Optional) Infrastructure as code
 
 If you'd rather provision Render from a file in the repo, commit this as
 `render.yaml` at the repo root and pick **Blueprint** instead of **Web

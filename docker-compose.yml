@@ -1,3 +1,11 @@
+# Local "everything in containers" stack:
+#
+#   docker compose up                 # postgres + backend
+#   docker compose --profile full up  # adds the frontend served by nginx
+#
+# Use this for end-to-end smoke tests. For day-to-day frontend work, run
+# `ng serve` directly — the watcher is faster than rebuilding the image.
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -16,6 +24,48 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: worldcup-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:postgresql://postgres:5432/worldcup
+      DB_USERNAME: worldcup
+      DB_PASSWORD: worldcup
+      JPA_DDL_AUTO: validate
+      JPA_SHOW_SQL: "false"
+      JWT_SECRET: dev-secret-change-me-this-must-be-at-least-32-bytes-long-please
+      JWT_EXPIRATION_MS: "86400000"
+      CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost:8081
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://localhost:8080/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # Opt-in: only starts with `docker compose --profile full up`.
+  # Skipped by default because most local dev uses `ng serve`.
+  frontend:
+    profiles: ["full"]
+    build:
+      context: ./frontend
+    container_name: worldcup-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8081:80"
 
 volumes:
   postgres-data:
