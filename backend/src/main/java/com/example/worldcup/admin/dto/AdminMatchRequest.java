@@ -20,6 +20,6 @@ public record AdminMatchRequest(
         @Min(0) Integer homeScore,
         @Min(0) Integer awayScore,
         @Size(max = 64) String qualifiedTeam,
-        boolean isFinished
+        @NotNull Boolean isFinished
 ) {
 }

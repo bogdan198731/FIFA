@@ -1,0 +1,25 @@
+{
+  // Cloudflare Workers + Static Assets config for the Angular frontend.
+  //
+  // The "Pages" experience has been folded into Workers Builds; deploys now
+  // use `wrangler versions upload`, which needs to know where the built
+  // assets live. Without this file Cloudflare's build step fails with
+  // "If you are uploading a directory of assets ..." and no upload happens.
+  //
+  // - `name`: must match the Worker / Pages project name you picked in the
+  //   Cloudflare dashboard. Change this if your project isn't called
+  //   "worldcup-pool".
+  // - `assets.directory`: relative to this file. Angular 18 emits the
+  //   browser bundle to `<frontend>/dist/frontend/browser/` by default,
+  //   so this points there.
+  // - `assets.not_found_handling`: the Workers-Assets equivalent of the
+  //   classic Pages `_redirects` SPA fallback — any unmatched route
+  //   serves `index.html` so Angular's router can take over.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "worldcup-pool",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist/frontend/browser",
+    "not_found_handling": "single-page-application"
+  }
+}

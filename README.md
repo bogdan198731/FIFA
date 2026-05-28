@@ -9,7 +9,7 @@ leaderboard. This repository is being built in incremental phases.
 - Backend — Java 17 + Spring Boot 3
 - Database — PostgreSQL
 - ORM — Spring Data JPA / Hibernate
-- Auth — JWT (added in a later phase)
+- Auth — JWT (HS256) with BCrypt password hashing
 
 ---
 
@@ -198,14 +198,15 @@ then start the backend again — Flyway will rebuild from V1.
 │   └── src/main
 │       ├── java/com/example/worldcup
 │       │   ├── WorldcupApplication.java
-│       │   ├── auth/            (placeholder — later phase)
-│       │   ├── user/            User, UserRepository, Role
-│       │   ├── match/           Match, MatchRepository, MatchType, MatchStage
-│       │   ├── prediction/      Prediction, PredictionRepository
-│       │   ├── question/        TournamentQuestion(+Repo), TournamentAnswer(+Repo)
-│       │   ├── leaderboard/     (placeholder)
-│       │   ├── admin/           (placeholder)
-│       │   └── common/          CorsConfig, HealthController
+│       │   ├── auth/            JWT filter, security config, AuthController, JwtService
+│       │   ├── user/            User, UserRepository, Role, UserPrincipal
+│       │   ├── match/           Match (+ lock override), MatchService, MatchController
+│       │   ├── prediction/      Prediction, PredictionService, PredictionController
+│       │   ├── question/        TournamentQuestion/Answer + controller/service
+│       │   ├── leaderboard/     LeaderboardController + ranking service
+│       │   ├── dashboard/       DashboardController returning per-user summary
+│       │   ├── admin/           AdminMatchController, AdminScoreController + services
+│       │   └── common/          CorsConfig, HealthController, scoring, projections
 │       └── resources
 │           ├── application.yml
 │           └── db/migration/    Flyway scripts (V1 schema, V2 seed)
@@ -252,7 +253,9 @@ You can override any of these via environment variables (see
 - `JPA_DDL_AUTO` — `validate` (Flyway owns the schema)
 - `SPRING_PROFILES_ACTIVE` — `dev` (default) or `prod`
 - `CORS_ALLOWED_ORIGINS` — comma-separated, default `http://localhost:4200`
-- `JWT_SECRET` — HMAC signing key (≥32 bytes). Override in any non-dev environment.
+- `JWT_SECRET` — HMAC signing key (≥32 bytes). **Required in every non-dev
+  profile** — the app refuses to start otherwise. The `dev` profile carries a
+  throwaway default in `application-dev.yml` so local runs still work.
 - `JWT_EXPIRATION_MS` — token lifetime, default 24h
 
 ---
@@ -458,4 +461,65 @@ The seeded questions have deadlines in mid-2026. To exercise the locked state
 locally, edit a row's `deadline` in the `tournament_questions` table to a
 past timestamp, or wait for the deadline to pass.
 
-Next up: **Phase 12** - surfacing detailed score history and user-facing points breakdowns.
+---
+
+## Hardening pass (post-Phase 13)
+
+A focused review pass that doesn't add user-facing features, but tightens the
+seams that would bite under real traffic or operator error.
+
+**Concurrency / data correctness**
+
+- Score recalculation now acquires a Postgres advisory lock
+  (`pg_advisory_xact_lock`) before touching prediction/answer points. Two
+  admins clicking "Recalculate" at the same time serialise instead of racing.
+  See
+  [`AdminScoreService.acquireRecalculationLock()`](backend/src/main/java/com/example/worldcup/admin/AdminScoreService.java).
+- User totals are rebuilt from a `GROUP BY user_id, SUM(points_awarded)`
+  projection on each side instead of `findAll().stream().groupingBy(...)`.
+  The new
+  [`UserPointsAggregation`](backend/src/main/java/com/example/worldcup/common/projection/UserPointsAggregation.java)
+  projection is shared by `PredictionRepository.sumPointsByUser()` and
+  `TournamentAnswerRepository.sumPointsByUser()`.
+- Match results emit a `MatchResultUpdatedEvent`; `AdminScoreService` listens
+  via `@TransactionalEventListener(AFTER_COMMIT)` and automatically rescores
+  the match. Admins no longer need to click "Recalculate" after editing a
+  result.
+
+**Query efficiency**
+
+- The dashboard's "your rank" is now a single
+  `userRepository.countByTotalPointsGreaterThan(user.totalPoints) + 1`
+  instead of walking the entire leaderboard in memory.
+- The dashboard's prediction list uses
+  `PredictionRepository.findByUserIdFetchMatch(userId)` which `JOIN FETCH`es
+  the parent `Match` — no more N+1 on `prediction.getMatch().isFinished()`.
+
+**Hardening**
+
+- `MatchResultRequest.isFinished` and `AdminMatchRequest.isFinished` are now
+  `@NotNull Boolean` so a missing field returns 400 instead of silently
+  un-finishing a match (primitive `boolean` defaulted to `false`).
+- `JwtService` constructor refuses an empty `app.jwt.secret` and surfaces a
+  clear `IllegalStateException` at boot, rather than the cryptic
+  `WeakKeyException` from jjwt.
+- [`GlobalExceptionHandler`](backend/src/main/java/com/example/worldcup/common/GlobalExceptionHandler.java)
+  now has fallback handlers for `AccessDeniedException` (403),
+  `AuthenticationCredentialsNotFoundException` (401), and any uncaught
+  `Exception` (500, logged at ERROR).
+
+**Frontend**
+
+- The auth interceptor only attaches the JWT to URLs that target our own API
+  — the token never goes to third-party hosts. It also no longer calls
+  `router.navigateByUrl('/login')` after `auth.logout()` (which already
+  navigates), which was racing the router during the bootstrap `/auth/me`
+  call.
+- `MatchCardComponent` normalises (trim + lowercase) before the "no changes
+  to save" comparison on the knockout `qualifiedTeam`, matching the
+  backend's `ScoringService.sameText` semantics.
+- `TournamentQuestionsPageComponent` now uses
+  `ChangeDetectionStrategy.OnPush` — the page is fully signal-driven anyway.
+
+Next up: **Phase 12** — surfacing detailed score history and user-facing
+points breakdowns.
