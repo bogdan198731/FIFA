@@ -165,16 +165,14 @@ Render backend directly.
 
 ### 2.1 Bake the production API URL into the frontend
 
-`frontend/src/environments/environment.prod.ts` currently reads:
+> ⚠ **Two-step.** Updating `environment.prod.ts` alone is **not enough** —
+> Angular 18's application builder doesn't auto-swap environment files. You
+> also need a `fileReplacements` entry in `angular.json`. Skip step (b) and
+> the production bundle silently uses `environment.ts` (the dev file with
+> `http://localhost:8080`), and you'll see `ERR_CONNECTION_REFUSED` to
+> localhost from the deployed Cloudflare site.
 
-```ts
-export const environment = {
-  production: true,
-  apiBaseUrl: '/api'
-};
-```
-
-Update it to your Render URL **before** pushing:
+**(a)** Set the Render URL in `frontend/src/environments/environment.prod.ts`:
 
 ```ts
 export const environment = {
@@ -183,11 +181,35 @@ export const environment = {
 };
 ```
 
-Commit and push that change to the branch you'll deploy.
+**(b)** Wire the swap into `frontend/angular.json` → `projects.frontend.architect.build.configurations.production` (add the `fileReplacements` block; leave the rest untouched):
 
-> 💡 If you'd rather not commit the URL, use Cloudflare's build environment
-> variables in §2.3 and read `import.meta.env` or fold them in via a
-> pre-build script. For one app, the in-repo value is simpler.
+```jsonc
+"production": {
+  "fileReplacements": [
+    {
+      "replace": "src/environments/environment.ts",
+      "with": "src/environments/environment.prod.ts"
+    }
+  ],
+  "budgets": [ /* … */ ],
+  "outputHashing": "all"
+}
+```
+
+**(c)** Verify locally before pushing — the Render URL should appear in the bundle:
+
+```bash
+cd frontend
+npx ng build --configuration=production
+grep -ho 'https://[^"]*onrender[^"]*' dist/frontend/browser/*.js | sort -u
+# → https://worldcup-api.onrender.com/api
+```
+
+Commit and push.
+
+> 💡 If you'd rather not commit the URL, replace the file at build time from
+> a Cloudflare env var via a tiny pre-build script — see the alternative in
+> §2.3.
 
 ### 2.2 Tell Cloudflare where the assets live (`wrangler.jsonc`)
 
@@ -362,6 +384,7 @@ one before announcing final results.
 | `401 Unauthorized` on every authed call after a redeploy | JWT secret changed                                         | Expected — sign in again to mint a token under the new secret.                                                                   |
 | Render build OOM / very slow                      | Free CPU + Maven warm-up                                   | Add `MAVEN_OPTS=-Xmx512m` env var; or upgrade to Starter for ~3× the build speed.                                                |
 | Docker build: `invalid local: resolve : lstat .../backend/backend: no such file or directory` | "Dockerfile Path" is relative to the context, not the repo | Set **Dockerfile Path** to `./Dockerfile` when **Docker Build Context Directory** is already `backend`. See §6 for the full pairing. |
+| Deployed site → `net::ERR_CONNECTION_REFUSED http://localhost:8080/...` | `angular.json` missing `fileReplacements` for prod, so the bundle is still using the dev `environment.ts` | Add the `fileReplacements` block from §2.1(b). Verify locally with the grep in §2.1(c) before pushing. |
 
 ---
 
