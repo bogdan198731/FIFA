@@ -126,6 +126,10 @@ public class AdminMatchService {
                 ? normalizedQualifiedTeam
                 : null);
         match.setFinished(finished);
+
+        // Once an admin has touched the result, the sync agent must defer to
+        // them — otherwise an upstream feed could overwrite a correction.
+        match.setResultManualOverride(true);
     }
 
     private String trimToNull(String value) {

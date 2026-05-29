@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long> {
@@ -16,4 +17,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByStage(MatchStage stage);
 
     List<Match> findByFinishedFalseAndKickoffAtAfterOrderByKickoffAtAsc(Instant after);
+
+    /** Lookup by the upstream football data provider's match ID. */
+    Optional<Match> findByExternalId(String externalId);
 }

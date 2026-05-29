@@ -463,6 +463,64 @@ past timestamp, or wait for the deadline to pass.
 
 ---
 
+## Live Football Data Sync Agent
+
+A backend agent that periodically reconciles the local `matches` table with
+an upstream football data provider (Football-Data.org by default). It pulls
+fixtures, kickoff changes, live scores, and final results, and triggers the
+existing score recalc when a match transitions to finished — all without
+ever touching user predictions.
+
+**Disabled by default.** Set `FOOTBALL_SYNC_ENABLED=true` and supply
+`FOOTBALL_API_KEY` to opt in. Everything else has sensible defaults.
+
+```bash
+FOOTBALL_SYNC_ENABLED=true
+FOOTBALL_API_KEY=<your key from football-data.org/client/register>
+FOOTBALL_COMPETITION_ID=WC            # default; WC = FIFA World Cup
+FOOTBALL_MATCH_INTERVAL=PT5M          # ISO-8601 duration
+FOOTBALL_TEAM_CRON=0 0 4 * * *        # daily team refresh
+```
+
+When enabled, two scheduled jobs run:
+
+- **`syncMatches()`** every 5 minutes — picks up rescheduled kickoffs, live
+  score updates, and finished results.
+- **`syncTeams()`** daily at 04:00 — refreshes the `teams` cache.
+
+Plus a manual trigger for operators:
+
+```bash
+curl -X POST -H "Authorization: Bearer <admin-jwt>" \
+  https://<backend>/api/admin/sync/run
+```
+
+**Three guard rails keep the sync from corrupting user data:**
+
+1. Matches without an `external_id` are left alone — admin-created fixtures
+   stay admin-owned.
+2. If `match.result_manual_override = true` (flipped on every admin result
+   edit), the agent doesn't touch result fields. The admin always wins.
+3. Kickoff times only update while no prediction exists for that match — once
+   users have locked in picks, the kickoff stays put.
+
+When the feed transitions a match to *finished*, the agent emits the same
+`MatchResultUpdatedEvent` an admin edit would, and `AdminScoreService`
+rescores the predictions through the existing event listener — no new
+scoring code paths.
+
+Implementation lives under
+[`backend/src/main/java/com/example/worldcup/sync/`](backend/src/main/java/com/example/worldcup/sync/),
+with the V6 Flyway migration adding `matches.external_id`,
+`matches.result_manual_override`, and the `teams` table.
+
+To swap providers, implement
+[`FootballDataClient`](backend/src/main/java/com/example/worldcup/sync/FootballDataClient.java)
+in a new `@Component @ConditionalOnProperty(name = "app.football-sync.provider", havingValue = "<your-id>")`
+class and flip `FOOTBALL_PROVIDER` to the new id.
+
+---
+
 ## Hardening pass (post-Phase 13)
 
 A focused review pass that doesn't add user-facing features, but tightens the

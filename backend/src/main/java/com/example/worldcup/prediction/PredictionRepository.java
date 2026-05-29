@@ -20,6 +20,14 @@ public interface PredictionRepository extends JpaRepository<Prediction, Long> {
     List<Prediction> findByMatchId(Long matchId);
 
     /**
+     * Used by the sync agent to decide whether it's safe to overwrite a
+     * match's {@code kickoffAt} with an upstream value. If any user has
+     * already locked in a prediction for the match, the kickoff is left
+     * alone so we don't move the goalpost on them.
+     */
+    boolean existsByMatchId(Long matchId);
+
+    /**
      * Fetches every prediction belonging to a user with the parent match joined
      * eagerly. Used by the dashboard so iterating {@code prediction.getMatch()}
      * doesn't trigger N+1 lazy loads.

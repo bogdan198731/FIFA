@@ -20,7 +20,9 @@ public record MatchResponse(
         String knockoutWinner,
         boolean finished,
         PredictionLockOverride predictionLockOverride,
-        boolean locked
+        boolean locked,
+        String externalId,
+        boolean resultManualOverride
 ) {
 
     public static MatchResponse from(Match match, Instant now) {
@@ -37,7 +39,9 @@ public record MatchResponse(
                 match.getKnockoutWinner(),
                 match.isFinished(),
                 match.getPredictionLockOverride(),
-                match.isPredictionLocked(now)
+                match.isPredictionLocked(now),
+                match.getExternalId(),
+                match.isResultManualOverride()
         );
     }
 }

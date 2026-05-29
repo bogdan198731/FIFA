@@ -35,6 +35,27 @@ app:
     secret: ${JWT_SECRET:}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
     issuer: worldcup-backend
+  football-sync:
+    # Disabled by default. When false the entire sync package (service,
+    # scheduled jobs, admin endpoint) stays out of the application context —
+    # the app behaves exactly as it did before this feature shipped.
+    enabled: ${FOOTBALL_SYNC_ENABLED:false}
+    # Which FootballDataClient implementation to wire in. Currently only
+    # `football-data-org` is provided; add another by implementing the
+    # interface and toggling the value.
+    provider: ${FOOTBALL_PROVIDER:football-data-org}
+    # Required when enabled=true. football-data.org issues free keys at
+    # https://www.football-data.org/client/register.
+    api-key: ${FOOTBALL_API_KEY:}
+    # Competition identifier on the upstream provider. `WC` is the
+    # football-data.org code for the FIFA World Cup.
+    competition-id: ${FOOTBALL_COMPETITION_ID:WC}
+    base-url: ${FOOTBALL_API_BASE_URL:https://api.football-data.org/v4}
+    # How often syncMatches() polls. ISO-8601 duration; default 5 minutes.
+    # Free tier of football-data.org allows 10 req/min so this is safe.
+    match-interval: ${FOOTBALL_MATCH_INTERVAL:PT5M}
+    # Daily team refresh, 04:00 server time by default.
+    team-cron: ${FOOTBALL_TEAM_CRON:0 0 4 * * *}
 
 management:
   endpoints:

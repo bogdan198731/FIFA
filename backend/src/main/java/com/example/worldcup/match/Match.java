@@ -55,6 +55,22 @@ public class Match {
     @Column(name = "prediction_lock_override", length = 10)
     private PredictionLockOverride predictionLockOverride;
 
+    /**
+     * Opaque ID from the upstream football data provider. {@code null} for
+     * matches the admin created manually — the sync agent skips those.
+     */
+    @Column(name = "external_id", length = 64, unique = true)
+    private String externalId;
+
+    /**
+     * Set to {@code true} the moment an admin edits a match's result through
+     * the admin UI. The sync agent checks this flag before writing result
+     * fields and skips matches where it's true, so the admin's input always
+     * wins over the upstream feed.
+     */
+    @Column(name = "result_manual_override", nullable = false)
+    private boolean resultManualOverride;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -162,6 +178,22 @@ public class Match {
 
     public void setPredictionLockOverride(PredictionLockOverride predictionLockOverride) {
         this.predictionLockOverride = predictionLockOverride;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    public boolean isResultManualOverride() {
+        return resultManualOverride;
+    }
+
+    public void setResultManualOverride(boolean resultManualOverride) {
+        this.resultManualOverride = resultManualOverride;
     }
 
     public boolean isPredictionLocked(Instant now) {
