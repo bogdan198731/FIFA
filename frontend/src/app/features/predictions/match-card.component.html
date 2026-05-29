@@ -45,16 +45,24 @@
       }
     </dl>
   } @else {
-    <div class="score-row">
-      <label>
-        <span>{{ match.homeTeam }}</span>
-        <input type="number" min="0" inputmode="numeric" [formControl]="homeScoreControl" />
-      </label>
-      <span class="dash">-</span>
-      <label>
-        <span>{{ match.awayTeam }}</span>
-        <input type="number" min="0" inputmode="numeric" [formControl]="awayScoreControl" />
-      </label>
+    <div class="score-board">
+      <span class="team-name">{{ teamFlag(match.homeTeam) }} {{ match.homeTeam }}</span>
+      <span aria-hidden="true"></span>
+      <span class="team-name">{{ teamFlag(match.awayTeam) }} {{ match.awayTeam }}</span>
+
+      <input
+        type="number" min="0" inputmode="numeric"
+        class="score-input"
+        [formControl]="homeScoreControl"
+        [attr.aria-label]="match.homeTeam + ' goals'"
+      />
+      <span class="dash" aria-hidden="true">-</span>
+      <input
+        type="number" min="0" inputmode="numeric"
+        class="score-input"
+        [formControl]="awayScoreControl"
+        [attr.aria-label]="match.awayTeam + ' goals'"
+      />
     </div>
 
     @if (match.matchType === 'KNOCKOUT') {

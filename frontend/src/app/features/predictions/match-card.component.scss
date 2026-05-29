@@ -73,12 +73,30 @@
   margin-top: 0.6rem;
 }
 
-.score-row {
+// Explicit 2-row grid keeps the team labels on row 1 and the score
+// inputs on row 2, both aligned to the same three columns (home | dash |
+// away). The team row stays side-by-side at every breakpoint — no
+// collapse-to-single-column on mobile.
+.score-board {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: end;
-  gap: 0.75rem;
+  grid-template-rows: auto auto;
+  column-gap: 0.75rem;
+  row-gap: 0.5rem;
+  align-items: center;
   margin-top: 1rem;
+}
+
+.team-name {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  // Truncate rather than wrap, so long names don't push the input row
+  // out of alignment.
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 label {
@@ -106,10 +124,16 @@ select {
   }
 }
 
+.score-input {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
 .dash {
-  padding-bottom: 0.55rem;
   color: var(--text-muted);
   font-weight: 700;
+  text-align: center;
 }
 
 .qualified {
@@ -192,17 +216,18 @@ select {
     justify-content: space-between;
   }
 
-  .score-row,
+  // Keep the score board's two-row layout on small screens — the inputs
+  // are narrow enough that team-name | dash | team-name still fits.
+  .score-board {
+    column-gap: 0.5rem;
+  }
+
+  .team-name {
+    font-size: 0.8rem;
+  }
+
   .locked-view {
     grid-template-columns: 1fr;
-  }
-
-  .score-row {
-    gap: 0.65rem;
-  }
-
-  .dash {
-    display: none;
   }
 
   .actions,
