@@ -281,7 +281,20 @@ unified runtime now.
    so the dashboard setting is a safety net rather than the source of
    truth.
 
-8. **Environment variables** → click **Add variable**:
+8. **Deploy command**: **leave blank**.
+
+   > ⚠ Cloudflare's automatic asset-upload step reads `wrangler.jsonc`
+   > and ships the build for you. Setting this field to
+   > `npx wrangler deploy` (a tempting "just to make sure" addition)
+   > forces `npx` to fetch wrangler from npm at deploy time. The build
+   > container's npm cache is not particularly reliable, and the failure
+   > mode is `npm error ENOENT … _cacache/content-v2/sha512/…` followed
+   > by `Failed: error occurred while running deploy command`. If you
+   > absolutely need a deploy command for some Workers Builds project
+   > shape, add `wrangler` as a `devDependency` first so it's installed
+   > by `npm ci` instead of fetched at deploy time.
+
+9. **Environment variables** → click **Add variable**:
 
    | Key            | Value  |
    | -------------- | ------ |
@@ -385,6 +398,7 @@ one before announcing final results.
 | Render build OOM / very slow                      | Free CPU + Maven warm-up                                   | Add `MAVEN_OPTS=-Xmx512m` env var; or upgrade to Starter for ~3× the build speed.                                                |
 | Docker build: `invalid local: resolve : lstat .../backend/backend: no such file or directory` | "Dockerfile Path" is relative to the context, not the repo | Set **Dockerfile Path** to `./Dockerfile` when **Docker Build Context Directory** is already `backend`. See §6 for the full pairing. |
 | Deployed site → `net::ERR_CONNECTION_REFUSED http://localhost:8080/...` | `angular.json` missing `fileReplacements` for prod, so the bundle is still using the dev `environment.ts` | Add the `fileReplacements` block from §2.1(b). Verify locally with the grep in §2.1(c) before pushing. |
+| Cloudflare deploy: `npm error ENOENT ... _cacache/content-v2/sha512/...` after "Success: Build command completed" | A custom "Deploy command" (usually `npx wrangler deploy`) is fetching wrangler at deploy time and the build container's npm cache is corrupt | Clear the **Deploy command** field in the Cloudflare project settings (§2.3 step 8). Cloudflare's auto-upload uses `wrangler.jsonc` and doesn't need a deploy command. If you really need one, add `wrangler` to `devDependencies` so it's already on disk after `npm ci`. |
 
 ---
 
