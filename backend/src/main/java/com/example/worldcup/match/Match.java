@@ -55,6 +55,9 @@ public class Match {
     @Column(name = "prediction_lock_override", length = 10)
     private PredictionLockOverride predictionLockOverride;
 
+    @Column(name = "api_fixture_id", unique = true)
+    private Long apiFixtureId;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -172,6 +175,14 @@ public class Match {
             return false;
         }
         return !now.isBefore(kickoffAt);
+    }
+
+    public Long getApiFixtureId() {
+        return apiFixtureId;
+    }
+
+    public void setApiFixtureId(Long apiFixtureId) {
+        this.apiFixtureId = apiFixtureId;
     }
 
     public Instant getCreatedAt() {

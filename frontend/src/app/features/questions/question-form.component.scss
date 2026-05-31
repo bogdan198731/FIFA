@@ -63,7 +63,7 @@
   gap: 0.6rem;
   flex-wrap: wrap;
 
-  input {
+  input, select {
     flex: 1 1 240px;
     padding: 0.55rem 0.75rem;
     border: 1px solid var(--border);

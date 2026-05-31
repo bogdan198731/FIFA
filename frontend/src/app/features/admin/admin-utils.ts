@@ -2,6 +2,7 @@ import { Match } from '../../core/models/match-prediction.model';
 
 export const matchStages = [
   'GROUP',
+  'ROUND_OF_32',
   'ROUND_OF_16',
   'QUARTER_FINAL',
   'SEMI_FINAL',
