@@ -44,6 +44,8 @@ services:
       JWT_EXPIRATION_MS: "86400000"
       CORS_ALLOWED_ORIGINS: http://localhost:4200,http://localhost:8081
       PORT: "8080"
+      # Optional: set in your shell to enable the WC fixture sync locally.
+      API_FOOTBALL_KEY: ${API_FOOTBALL_KEY:-}
     ports:
       - "8080:8080"
     healthcheck:
