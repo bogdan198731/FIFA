@@ -28,6 +28,12 @@ server:
 app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+  admin:
+    # Default ("bootstrap") admin, provisioned on startup. This account can
+    # never be demoted, so there's always an admin able to grant rights to
+    # others. Set ADMIN_PASSWORD in every real environment.
+    name: ${ADMIN_NAME:admin}
+    password: ${ADMIN_PASSWORD:}
   api-football:
     key: ${API_FOOTBALL_KEY:}
   jwt:

@@ -1,0 +1,42 @@
+<section class="admin-page">
+  <header class="header">
+    <h1>Configurations</h1>
+    <p>Read-only view of effective server configuration. Secrets are never shown — API keys appear only as configured / not configured.</p>
+  </header>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading configuration...</p>
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+    @case ('ready') {
+      @if (config(); as c) {
+        <section class="panel">
+          <h2>Accounts</h2>
+          <dl class="config-list">
+            <dt>Default admin</dt>
+            <dd>{{ c.bootstrapAdminName ?? '— not configured —' }}</dd>
+            <dt>Registered users</dt>
+            <dd>{{ c.userCount }}</dd>
+            <dt>Admins</dt>
+            <dd>{{ c.adminCount }}</dd>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <h2>Integrations</h2>
+          <dl class="config-list">
+            <dt>API-Football key</dt>
+            <dd>
+              <span class="badge" [class.badge--admin]="c.apiFootballKeyConfigured">
+                {{ c.apiFootballKeyConfigured ? 'Configured' : 'Not configured' }}
+              </span>
+            </dd>
+          </dl>
+        </section>
+      }
+    }
+  }
+</section>

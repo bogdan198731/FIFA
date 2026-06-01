@@ -57,6 +57,31 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'admin',
+    pathMatch: 'full',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-home-page.component').then(
+        (m) => m.AdminHomePageComponent
+      )
+  },
+  {
+    path: 'admin/users',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-users-page.component').then(
+        (m) => m.AdminUsersPageComponent
+      )
+  },
+  {
+    path: 'admin/config',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-config-page.component').then(
+        (m) => m.AdminConfigPageComponent
+      )
+  },
+  {
     path: 'admin/matches',
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>

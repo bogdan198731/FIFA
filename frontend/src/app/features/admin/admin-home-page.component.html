@@ -1,0 +1,15 @@
+<section class="admin-page">
+  <header class="header">
+    <h1>Admin</h1>
+    <p>Manage users, fixtures, results, scoring, and configuration.</p>
+  </header>
+
+  <div class="hub-grid">
+    @for (link of links; track link.path) {
+      <a class="hub-card" [routerLink]="link.path">
+        <h2>{{ link.title }}</h2>
+        <p>{{ link.description }}</p>
+      </a>
+    }
+  </div>
+</section>
