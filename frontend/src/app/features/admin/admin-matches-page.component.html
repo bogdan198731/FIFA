@@ -5,6 +5,18 @@
   </header>
 
   <section class="panel">
+    <h2>Update from external API</h2>
+    <p class="muted">
+      Pull the latest fixtures and kickoff times from API-Football into the
+      database.
+    </p>
+    <app-external-sync-button
+      label="Update fixtures from API"
+      (synced)="load()"
+    />
+  </section>
+
+  <section class="panel">
     <h2>Add match</h2>
     <app-match-form (saved)="upsert($event)" />
   </section>

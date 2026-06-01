@@ -515,6 +515,18 @@ effective server config: user/admin counts, the bootstrap admin name, and
 whether the API-Football integration is wired up. **Secrets are never
 returned** — the API key appears only as "configured / not configured".
 
+### Update from external API
+
+The **Matches**, **Results**, and **Scores** admin pages each carry an
+"Update … from API" button (a shared
+[`ExternalSyncButtonComponent`](frontend/src/app/features/admin/external-sync-button.component.ts)).
+It calls `POST /api/admin/sync` — the API-Football sync agent — which pulls
+fresh fixtures/results into the database and recalculates points for any
+newly finished match. The button reports how many rows were created /
+updated / unchanged, and the page refreshes its list afterwards. Requires
+`API_FOOTBALL_KEY` to be configured; otherwise the button surfaces a clear
+error.
+
 ---
 
 ## Hardening pass (post-Phase 13)

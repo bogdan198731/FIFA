@@ -7,12 +7,14 @@ import {
 } from '../../core/models/match-prediction.model';
 import { AdminScoreService } from '../../core/services/admin-score.service';
 import { MatchService } from '../../core/services/match.service';
+import { ExternalSyncButtonComponent } from './external-sync-button.component';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-admin-recalculate-scores-page',
   standalone: true,
+  imports: [ExternalSyncButtonComponent],
   templateUrl: './admin-recalculate-scores-page.component.html',
   styleUrl: './admin-page.component.scss'
 })
@@ -28,6 +30,10 @@ export class AdminRecalculateScoresPageComponent implements OnInit {
   readonly recalculatingMatchId = signal<number | null>(null);
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  load(): void {
     this.matchService.list().subscribe({
       next: (matches) => {
         this.matches.set(matches);

@@ -5,6 +5,18 @@
   </header>
 
   <section class="panel">
+    <h2>Update from external API</h2>
+    <p class="muted">
+      Pull the latest results from API-Football. Newly finished matches
+      recalculate their predictions' points automatically.
+    </p>
+    <app-external-sync-button
+      label="Update results &amp; scores from API"
+      (synced)="load()"
+    />
+  </section>
+
+  <section class="panel">
     <h2>All scores</h2>
     <p class="muted">
       Recalculates finished matches, tournament questions, and every user's total points.

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 
 import { MatchFormComponent } from './match-form.component';
+import { ExternalSyncButtonComponent } from './external-sync-button.component';
 import { Match } from '../../core/models/match-prediction.model';
 import { MatchService } from '../../core/services/match.service';
 
@@ -9,7 +10,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 @Component({
   selector: 'app-admin-matches-page',
   standalone: true,
-  imports: [MatchFormComponent],
+  imports: [MatchFormComponent, ExternalSyncButtonComponent],
   templateUrl: './admin-matches-page.component.html',
   styleUrl: './admin-page.component.scss'
 })

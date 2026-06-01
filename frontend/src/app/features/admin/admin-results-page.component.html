@@ -4,6 +4,18 @@
     <p>Enter final scores, qualified teams, and prediction lock overrides.</p>
   </header>
 
+  <section class="panel">
+    <h2>Update from external API</h2>
+    <p class="muted">
+      Pull the latest scores and finished results from API-Football. Finished
+      matches automatically trigger a score recalculation.
+    </p>
+    <app-external-sync-button
+      label="Update results from API"
+      (synced)="load()"
+    />
+  </section>
+
   @switch (state()) {
     @case ('loading') {
       <p class="muted">Loading...</p>
