@@ -26,6 +26,7 @@ export class AdminUsersPageComponent implements OnInit {
   readonly updatingUserId = signal<number | null>(null);
 
   readonly currentUserId = computed(() => this.auth.currentUser()?.id ?? null);
+  readonly adminCount = computed(() => this.users().filter((u) => u.role === 'ADMIN').length);
 
   ngOnInit(): void {
     this.load();
@@ -45,9 +46,18 @@ export class AdminUsersPageComponent implements OnInit {
     });
   }
 
+  /** True if demoting this user would leave the pool with no admins. */
+  isLastAdmin(user: AdminUser): boolean {
+    return user.role === 'ADMIN' && this.adminCount() <= 1;
+  }
+
   /** True for rows whose role the current admin isn't allowed to change. */
   isLocked(user: AdminUser): boolean {
-    return user.bootstrapAdmin || user.id === this.currentUserId();
+    return (
+      user.bootstrapAdmin ||
+      user.id === this.currentUserId() ||
+      this.isLastAdmin(user)
+    );
   }
 
   lockReason(user: AdminUser): string {
@@ -56,6 +66,9 @@ export class AdminUsersPageComponent implements OnInit {
     }
     if (user.id === this.currentUserId()) {
       return 'You';
+    }
+    if (this.isLastAdmin(user)) {
+      return 'Last admin';
     }
     return '';
   }
