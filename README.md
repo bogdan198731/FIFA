@@ -497,13 +497,16 @@ The default admin (or any admin) manages roles from `/admin/users`:
 - `GET /api/admin/users` — list all users with role, points, join date.
 - `PUT /api/admin/users/{id}/role` — set a user's role to `USER` or `ADMIN`.
 
-Two server-side guards (in
+Three server-side guards (in
 [`AdminUserService`](backend/src/main/java/com/example/worldcup/admin/AdminUserService.java),
 mirrored in the UI):
 
-1. **No self-demotion** — an admin can't change their own role.
-2. **The bootstrap admin can't be demoted** — there's always at least one
-   admin able to grant rights.
+1. **No self-demotion** — an admin can't change their own role, so the default
+   admin can't revoke its own rights.
+2. **The bootstrap admin can't be demoted** — the account named by
+   `ADMIN_NAME` is protected from anyone.
+3. **The last admin can't be demoted** — config-independent backstop, so the
+   pool can never reach zero admins even if `ADMIN_NAME` isn't set to match.
 
 ### Configurations screen
 

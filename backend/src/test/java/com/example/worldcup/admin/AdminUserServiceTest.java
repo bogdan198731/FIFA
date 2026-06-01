@@ -46,13 +46,27 @@ class AdminUserServiceTest {
     }
 
     @Test
-    void demotesAnAdminToUser() {
+    void demotesAnAdminToUserWhenOtherAdminsRemain() {
         User bob = user(3L, "bob", Role.ADMIN);
         when(userRepository.findById(3L)).thenReturn(Optional.of(bob));
+        when(userRepository.countByRole(Role.ADMIN)).thenReturn(2L);
 
         service.updateRole(1L, 3L, Role.USER);
 
         assertThat(bob.getRole()).isEqualTo(Role.USER);
+    }
+
+    @Test
+    void rejectsDemotingTheLastRemainingAdmin() {
+        User bob = user(3L, "bob", Role.ADMIN);
+        when(userRepository.findById(3L)).thenReturn(Optional.of(bob));
+        when(userRepository.countByRole(Role.ADMIN)).thenReturn(1L);
+
+        assertThatThrownBy(() -> service.updateRole(1L, 3L, Role.USER))
+                .isInstanceOf(ApiException.class)
+                .extracting(ex -> ((ApiException) ex).getStatus())
+                .isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(bob.getRole()).isEqualTo(Role.ADMIN);
     }
 
     @Test

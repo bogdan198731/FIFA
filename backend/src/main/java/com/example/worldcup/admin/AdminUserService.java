@@ -17,12 +17,15 @@ import java.util.Objects;
 /**
  * User administration: listing users and granting/revoking the ADMIN role.
  *
- * <p>Two guards keep an admin from accidentally locking the system out of
- * administration:
+ * <p>Three guards keep the system from ever losing administrative access:
  * <ol>
- *   <li>An admin can't change their <em>own</em> role (no self-demotion).</li>
- *   <li>The bootstrap admin (named by {@code ADMIN_NAME}) can never be
- *       demoted — there's always at least one admin able to grant rights.</li>
+ *   <li><b>No self-demotion</b> — an admin can't change their own role, so the
+ *       default admin can't revoke its own rights.</li>
+ *   <li><b>Bootstrap admin is protected</b> — the account named by
+ *       {@code ADMIN_NAME} can never be demoted by anyone.</li>
+ *   <li><b>Last admin is protected</b> — demoting the only remaining admin is
+ *       rejected. This is config-independent, so it holds even if
+ *       {@code ADMIN_NAME} isn't set to match the default admin's username.</li>
  * </ol>
  */
 @Service
@@ -48,6 +51,7 @@ public class AdminUserService {
     public AdminUserResponse updateRole(Long actingAdminId,
                                         Long targetUserId,
                                         Role newRole) {
+        // Guard 1: an admin can never change their own role.
         if (Objects.equals(actingAdminId, targetUserId)) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "You cannot change your own role.");
@@ -56,9 +60,19 @@ public class AdminUserService {
         User target = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "User not found"));
 
-        if (isBootstrapAdmin(target) && newRole != Role.ADMIN) {
-            throw new ApiException(HttpStatus.BAD_REQUEST,
-                    "The default admin's role cannot be changed.");
+        boolean isDemotion = target.getRole() == Role.ADMIN && newRole != Role.ADMIN;
+
+        if (isDemotion) {
+            // Guard 2: the configured default admin is never demotable.
+            if (isBootstrapAdmin(target)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST,
+                        "The default admin's role cannot be changed.");
+            }
+            // Guard 3: never demote the last remaining admin (config-independent).
+            if (userRepository.countByRole(Role.ADMIN) <= 1) {
+                throw new ApiException(HttpStatus.BAD_REQUEST,
+                        "Cannot remove the last administrator.");
+            }
         }
 
         target.setRole(newRole);
