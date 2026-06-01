@@ -529,6 +529,31 @@ error.
 
 ---
 
+## National teams & players
+
+Two reference tables for tournament squads (V8 migration:
+[`V8__add_national_teams_and_players.sql`](backend/src/main/resources/db/migration/V8__add_national_teams_and_players.sql)).
+
+- **`national_teams`** — `id` (PK) + unique `name`.
+  [`NationalTeam`](backend/src/main/java/com/example/worldcup/team/NationalTeam.java) /
+  [`NationalTeamRepository`](backend/src/main/java/com/example/worldcup/team/NationalTeamRepository.java),
+  DTOs in [`team/dto`](backend/src/main/java/com/example/worldcup/team/dto).
+- **`players`** — `id` (PK), `national_team_id` (FK → `national_teams`,
+  cascade delete), `name`, `position`
+  ([`PlayerPosition`](backend/src/main/java/com/example/worldcup/player/PlayerPosition.java):
+  GOALKEEPER / DEFENDER / MIDFIELDER / FORWARD), `goals_scored`,
+  `yellow_cards`, and a goalkeeper-only `saves` column (nullable — `null`
+  for outfield players).
+  [`Player`](backend/src/main/java/com/example/worldcup/player/Player.java) /
+  [`PlayerRepository`](backend/src/main/java/com/example/worldcup/player/PlayerRepository.java),
+  DTOs in [`player/dto`](backend/src/main/java/com/example/worldcup/player/dto).
+
+Entity↔mapping is verified by a `@DataJpaTest`
+([`NationalTeamAndPlayerJpaTest`](backend/src/test/java/com/example/worldcup/team/NationalTeamAndPlayerJpaTest.java)).
+The tables are standalone for now — no controllers/services yet.
+
+---
+
 ## Hardening pass (post-Phase 13)
 
 A focused review pass that doesn't add user-facing features, but tightens the
