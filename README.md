@@ -463,6 +463,57 @@ past timestamp, or wait for the deadline to pass.
 
 ---
 
+## Admin panel & user management
+
+The app has a dedicated admin area at `/admin` (ADMIN-only, behind the route
+guard). It's a hub linking to: **Users**, **Matches**, **Results**,
+**Scores**, and **Configurations**.
+
+### Default ("bootstrap") admin
+
+A default admin is provisioned on every startup from two environment
+variables:
+
+```bash
+ADMIN_NAME=admin        # the bootstrap admin's username
+ADMIN_PASSWORD=<secret> # BCrypt-hashed before storage
+```
+
+[`AdminBootstrap`](backend/src/main/java/com/example/worldcup/admin/AdminBootstrap.java)
+(an `ApplicationRunner`, runs in every profile):
+
+- creates the account with the `ADMIN` role if it doesn't exist (only when
+  `ADMIN_PASSWORD` is set — it won't create a passwordless admin);
+- promotes an existing account of that name to `ADMIN`;
+- resets its password when `ADMIN_PASSWORD` is provided.
+
+In `dev`, `ADMIN_NAME`/`ADMIN_PASSWORD` default to `admin`/`password` so you
+can sign in immediately. **Set a real `ADMIN_PASSWORD` in production.**
+
+### Granting admin rights to other users
+
+The default admin (or any admin) manages roles from `/admin/users`:
+
+- `GET /api/admin/users` — list all users with role, points, join date.
+- `PUT /api/admin/users/{id}/role` — set a user's role to `USER` or `ADMIN`.
+
+Two server-side guards (in
+[`AdminUserService`](backend/src/main/java/com/example/worldcup/admin/AdminUserService.java),
+mirrored in the UI):
+
+1. **No self-demotion** — an admin can't change their own role.
+2. **The bootstrap admin can't be demoted** — there's always at least one
+   admin able to grant rights.
+
+### Configurations screen
+
+`/admin/config` (`GET /api/admin/config`) shows a read-only snapshot of
+effective server config: user/admin counts, the bootstrap admin name, and
+whether the API-Football integration is wired up. **Secrets are never
+returned** — the API key appears only as "configured / not configured".
+
+---
+
 ## Hardening pass (post-Phase 13)
 
 A focused review pass that doesn't add user-facing features, but tightens the

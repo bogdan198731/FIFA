@@ -10,6 +10,11 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:dev-secret-change-me-this-must-be-at-least-32-bytes-long-please}
+  # In dev the bootstrap admin is "admin" with this password, so you can sign
+  # in immediately. DevUserSeeder also resets the seeded admin's password.
+  admin:
+    name: ${ADMIN_NAME:admin}
+    password: ${ADMIN_PASSWORD:password}
 
 logging:
   level:

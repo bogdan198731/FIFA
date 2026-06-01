@@ -111,6 +111,177 @@
   }
 }
 
+// Stack multiple panels with breathing room (config page has several).
+.panel + .panel {
+  margin-top: 1rem;
+}
+
+// ----- Admin hub landing grid -----------------------------------------
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.hub-card {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+}
+
+// ----- Users table ----------------------------------------------------
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+
+  thead {
+    background: var(--surface-2);
+  }
+
+  th,
+  td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .name {
+    font-weight: 600;
+  }
+
+  .email {
+    color: var(--text-muted);
+  }
+
+  .points {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actions-col {
+    text-align: right;
+  }
+}
+
+.tag {
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &--admin {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+
+.role-button {
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-strong);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &.danger {
+    background: transparent;
+    border-color: var(--danger);
+    color: var(--danger);
+
+    &:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--danger) 10%, transparent);
+    }
+  }
+}
+
+// ----- Config list ----------------------------------------------------
+.config-list {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0.55rem 1rem;
+  margin: 0;
+
+  dt {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text);
+  }
+}
+
 @media (max-width: 720px) {
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -119,5 +290,14 @@
   .score-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .config-list {
+    grid-template-columns: 1fr;
+    gap: 0.2rem 0;
+
+    dd {
+      margin-bottom: 0.6rem;
+    }
   }
 }

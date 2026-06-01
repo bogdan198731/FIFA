@@ -25,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * tied users share a rank).
      */
     long countByTotalPointsGreaterThan(long totalPoints);
+
+    long countByRole(Role role);
 }

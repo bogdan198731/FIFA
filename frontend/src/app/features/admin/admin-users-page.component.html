@@ -1,0 +1,74 @@
+<section class="admin-page">
+  <header class="header">
+    <h1>Users</h1>
+    <p>Grant or revoke admin rights. The default admin can't be changed, and you can't change your own role.</p>
+  </header>
+
+  @if (errorMessage()) {
+    <p class="error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted">Loading users...</p>
+    }
+    @case ('error') {
+      <button type="button" class="secondary-action" (click)="load()">Retry</button>
+    }
+    @case ('ready') {
+      <div class="table-wrap">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th scope="col">User</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+              <th scope="col" class="points">Points</th>
+              <th scope="col">Joined</th>
+              <th scope="col" class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.id) {
+              <tr>
+                <td>
+                  <span class="name">{{ user.username }}</span>
+                  @if (lockReason(user); as reason) {
+                    <span class="tag">{{ reason }}</span>
+                  }
+                </td>
+                <td class="email">{{ user.email }}</td>
+                <td>
+                  <span class="badge" [class.badge--admin]="user.role === 'ADMIN'">{{ user.role }}</span>
+                </td>
+                <td class="points">{{ user.totalPoints }}</td>
+                <td>{{ user.createdAt | date:'mediumDate' }}</td>
+                <td class="actions-col">
+                  @if (isLocked(user)) {
+                    <span class="muted">—</span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="role-button"
+                      [class.danger]="user.role === 'ADMIN'"
+                      [disabled]="updatingUserId() !== null"
+                      (click)="toggleRole(user)"
+                    >
+                      @if (updatingUserId() === user.id) {
+                        Saving...
+                      } @else if (user.role === 'ADMIN') {
+                        Revoke admin
+                      } @else {
+                        Make admin
+                      }
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>
