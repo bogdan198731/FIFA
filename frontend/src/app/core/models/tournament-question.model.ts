@@ -5,6 +5,7 @@ export interface TournamentQuestion {
   points: number;
   locked: boolean;
   correctAnswer: string | null;
+  options: string[] | null;
 }
 
 export interface TournamentAnswer {

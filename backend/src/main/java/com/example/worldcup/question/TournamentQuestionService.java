@@ -63,8 +63,11 @@ public class TournamentQuestionService {
                     "An answer already exists for this question — update it instead");
         }
 
+        String trimmed = req.answer().trim();
+        ensureValidOption(question, trimmed);
+
         User user = userRepository.getReferenceById(userId);
-        TournamentAnswer answer = new TournamentAnswer(user, question, req.answer().trim());
+        TournamentAnswer answer = new TournamentAnswer(user, question, trimmed);
         answerRepository.save(answer);
 
         return TournamentAnswerResponse.from(answer, now);
@@ -82,7 +85,10 @@ public class TournamentQuestionService {
         Instant now = Instant.now();
         ensureNotLocked(existing.getQuestion(), now);
 
-        existing.setAnswer(req.answer().trim());
+        String trimmed = req.answer().trim();
+        ensureValidOption(existing.getQuestion(), trimmed);
+
+        existing.setAnswer(trimmed);
         return TournamentAnswerResponse.from(existing, now);
     }
 
@@ -90,6 +96,14 @@ public class TournamentQuestionService {
         if (!now.isBefore(question.getDeadline())) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "This question is locked — its deadline has passed");
+        }
+    }
+
+    private void ensureValidOption(TournamentQuestion question, String answer) {
+        List<String> options = question.getOptions();
+        if (options != null && !options.isEmpty() && !options.contains(answer)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "Answer must be one of the available options");
         }
     }
 }

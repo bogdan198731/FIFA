@@ -3,6 +3,7 @@ export type PredictionLockOverride = 'LOCKED' | 'UNLOCKED';
 
 export type MatchStage =
   | 'GROUP'
+  | 'ROUND_OF_32'
   | 'ROUND_OF_16'
   | 'QUARTER_FINAL'
   | 'SEMI_FINAL'
