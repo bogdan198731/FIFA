@@ -1,12 +1,15 @@
 package com.example.worldcup.sync;
 
+import com.example.worldcup.common.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +37,10 @@ public class WorldCupSyncService {
     // persister.persistAll() opens its own transaction only for the DB writes.
     public SyncResult sync() {
         if (apiKey == null || apiKey.isBlank()) {
-            throw new IllegalStateException("API_FOOTBALL_KEY is not configured");
+            // Surface a clear, actionable message instead of a generic 500.
+            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "External API sync is not configured. Set the API_FOOTBALL_KEY "
+                            + "environment variable on the server.");
         }
         List<JsonNode> fixtures = fetchAllFixtures();
         return persister.persistAll(fixtures);
@@ -45,17 +51,26 @@ public class WorldCupSyncService {
         int page = 1;
         while (true) {
             String url = API_BASE + "/fixtures?league=" + LEAGUE_ID + "&season=" + SEASON + "&page=" + page;
-            JsonNode body = restClient.get()
-                    .uri(url)
-                    .header("x-apisports-key", apiKey)
-                    .retrieve()
-                    .body(JsonNode.class);
+            JsonNode body;
+            try {
+                body = restClient.get()
+                        .uri(url)
+                        .header("x-apisports-key", apiKey)
+                        .retrieve()
+                        .body(JsonNode.class);
+            } catch (RestClientException ex) {
+                // Timeout, connection refused, non-2xx from API-Football, etc.
+                throw new ApiException(HttpStatus.BAD_GATEWAY,
+                        "Could not reach API-Football: " + ex.getMessage());
+            }
 
             if (body == null) break;
 
             JsonNode errors = body.get("errors");
             if (errors != null && !errors.isEmpty() && !(errors.isObject() && errors.isEmpty())) {
-                throw new IllegalStateException("API-Football error: " + errors);
+                // e.g. invalid key, or the plan doesn't cover league/season.
+                throw new ApiException(HttpStatus.BAD_GATEWAY,
+                        "API-Football returned an error: " + errors);
             }
 
             JsonNode response = body.get("response");
