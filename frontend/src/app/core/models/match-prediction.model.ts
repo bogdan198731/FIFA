@@ -18,6 +18,7 @@ export interface Match {
   venue: string | null;
   matchType: MatchType;
   stage: MatchStage;
+  groupName: string | null;
   homeScore: number | null;
   awayScore: number | null;
   knockoutWinner: string | null;
@@ -57,6 +58,7 @@ export interface AdminMatchRequest {
   kickoffTime: string;
   venue?: string | null;
   stage: MatchStage;
+  groupName?: string | null;
   matchType: MatchType;
   homeScore?: number | null;
   awayScore?: number | null;

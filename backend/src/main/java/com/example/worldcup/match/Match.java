@@ -39,6 +39,13 @@ public class Match {
     @Column(name = "stage", nullable = false, length = 20)
     private MatchStage stage;
 
+    /**
+     * Group label for group-stage matches (e.g. "A", "B"). {@code null} for
+     * knockout matches.
+     */
+    @Column(name = "group_name", length = 16)
+    private String groupName;
+
     @Column(name = "home_score")
     private Integer homeScore;
 
@@ -125,6 +132,14 @@ public class Match {
 
     public void setStage(MatchStage stage) {
         this.stage = stage;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public Integer getHomeScore() {

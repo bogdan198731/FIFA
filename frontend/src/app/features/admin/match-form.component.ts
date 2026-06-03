@@ -32,12 +32,18 @@ export class MatchFormComponent implements OnChanges {
     kickoffTime: ['', Validators.required],
     venue: [''],
     stage: ['GROUP', Validators.required],
+    groupName: ['', Validators.maxLength(16)],
     matchType: ['REGULAR', Validators.required],
     isFinished: [false],
     homeScore: [null as number | null, Validators.min(0)],
     awayScore: [null as number | null, Validators.min(0)],
     qualifiedTeam: ['']
   });
+
+  /** Group is only relevant (and required) for group-stage matches. */
+  get isGroupStage(): boolean {
+    return this.form.controls.stage.value === 'GROUP';
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['match']) {
@@ -49,6 +55,7 @@ export class MatchFormComponent implements OnChanges {
           kickoffTime: '',
           venue: '',
           stage: 'GROUP',
+          groupName: '',
           matchType: 'REGULAR',
           isFinished: false,
           homeScore: null,
@@ -63,6 +70,7 @@ export class MatchFormComponent implements OnChanges {
         kickoffTime: toDateTimeLocal(this.match.kickoffAt),
         venue: this.match.venue ?? '',
         stage: this.match.stage,
+        groupName: this.match.groupName ?? '',
         matchType: this.match.matchType,
         isFinished: this.match.finished,
         homeScore: this.match.homeScore,
@@ -85,6 +93,7 @@ export class MatchFormComponent implements OnChanges {
       kickoffTime: fromDateTimeLocal(raw.kickoffTime),
       venue: raw.venue || null,
       stage: raw.stage as AdminMatchRequest['stage'],
+      groupName: raw.stage === 'GROUP' ? (raw.groupName.trim() || null) : null,
       matchType: raw.matchType as AdminMatchRequest['matchType'],
       isFinished: raw.isFinished,
       homeScore: raw.homeScore,

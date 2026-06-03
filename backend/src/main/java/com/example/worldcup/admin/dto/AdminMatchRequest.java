@@ -16,6 +16,7 @@ public record AdminMatchRequest(
         @NotNull Instant kickoffTime,
         @Size(max = 128) String venue,
         @NotNull MatchStage stage,
+        @Size(max = 16) String groupName,
         @NotNull MatchType matchType,
         @Min(0) Integer homeScore,
         @Min(0) Integer awayScore,
