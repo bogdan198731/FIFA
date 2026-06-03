@@ -24,6 +24,12 @@
         }
       </select>
     </label>
+    @if (isGroupStage) {
+      <label>
+        <span>Group</span>
+        <input type="text" formControlName="groupName" maxlength="16" placeholder="e.g. A" />
+      </label>
+    }
     <label>
       <span>Type</span>
       <select formControlName="matchType">

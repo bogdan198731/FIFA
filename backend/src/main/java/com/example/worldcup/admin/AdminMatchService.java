@@ -5,6 +5,7 @@ import com.example.worldcup.admin.dto.MatchResultRequest;
 import com.example.worldcup.common.ApiException;
 import com.example.worldcup.match.Match;
 import com.example.worldcup.match.MatchRepository;
+import com.example.worldcup.match.MatchStage;
 import com.example.worldcup.match.MatchType;
 import com.example.worldcup.match.PredictionLockOverride;
 import com.example.worldcup.match.dto.MatchResponse;
@@ -96,6 +97,24 @@ public class AdminMatchService {
         match.setVenue(trimToNull(req.venue()));
         match.setStage(req.stage());
         match.setType(req.matchType());
+        match.setGroupName(resolveGroupName(req.stage(), req.groupName()));
+    }
+
+    /**
+     * Group-stage matches must carry a group; everything else has none. This
+     * enforces "if the match is in the group stage we need to have the group".
+     */
+    private String resolveGroupName(MatchStage stage, String rawGroupName) {
+        String groupName = trimToNull(rawGroupName);
+        if (stage == MatchStage.GROUP) {
+            if (groupName == null) {
+                throw new ApiException(HttpStatus.BAD_REQUEST,
+                        "Group is required for group-stage matches");
+            }
+            return groupName;
+        }
+        // Knockout matches never have a group.
+        return null;
     }
 
     private void applyResultFields(Match match,

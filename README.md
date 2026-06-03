@@ -529,6 +529,26 @@ error.
 
 ---
 
+## Match groups & foldable predictions
+
+Group-stage matches now carry a **group** label (e.g. "A", "B").
+
+- `matches.group_name` column (V8 migration). Set on `Match`/`MatchResponse`,
+  required by the admin endpoint for `GROUP`-stage matches and forced `null`
+  for knockout matches
+  ([`AdminMatchService.resolveGroupName`](backend/src/main/java/com/example/worldcup/admin/AdminMatchService.java)).
+- The admin match form shows a **Group** input only when the stage is
+  `GROUP`. The API-Football sync also populates it automatically by parsing
+  the round (`"Group A - 1"` → `A`) in
+  [`WorldCupSyncPersister`](backend/src/main/java/com/example/worldcup/sync/WorldCupSyncPersister.java).
+
+The predictions page (`/predictions`) groups matches into **foldable
+sections** — one per group, then one per knockout stage — using native
+`<details>`/`<summary>`. **Every section is folded by default**; the summary
+shows the section name and match/open counts.
+
+---
+
 ## Hardening pass (post-Phase 13)
 
 A focused review pass that doesn't add user-facing features, but tightens the

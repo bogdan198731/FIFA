@@ -25,13 +25,30 @@
           {{ openCount() }} of {{ matches().length }} still open.
           {{ savedCount() }} saved.
         </p>
-        <div class="list">
-          @for (match of matches(); track match.id) {
-            <app-match-card
-              [match]="match"
-              [prediction]="predictionFor(match.id)"
-              (predictionSaved)="onPredictionSaved($event)"
-            />
+        <div class="groups">
+          @for (section of sections(); track section.key) {
+            <details class="group">
+              <summary class="group__summary">
+                <span class="group__title">{{ section.title }}</span>
+                <span class="group__meta">
+                  {{ section.matches.length }}
+                  {{ section.matches.length === 1 ? 'match' : 'matches' }}
+                  @if (openInSection(section) > 0) {
+                    · {{ openInSection(section) }} open
+                  }
+                </span>
+              </summary>
+
+              <div class="list">
+                @for (match of section.matches; track match.id) {
+                  <app-match-card
+                    [match]="match"
+                    [prediction]="predictionFor(match.id)"
+                    (predictionSaved)="onPredictionSaved($event)"
+                  />
+                }
+              </div>
+            </details>
           }
         </div>
       }

@@ -17,6 +17,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 class WorldCupSyncPersister {
@@ -74,6 +76,7 @@ class WorldCupSyncPersister {
         String round = f.at("/league/round").asText(null);
         MatchStage stage = toStage(round);
         MatchType type = stage == MatchStage.GROUP ? MatchType.REGULAR : MatchType.KNOCKOUT;
+        String groupName = toGroup(round, stage);
 
         String status = fixNode.at("/status/short").asText("");
         boolean finished = isFinished(status);
@@ -99,6 +102,7 @@ class WorldCupSyncPersister {
             Match match = new Match(homeTeam, awayTeam, kickoffAt, type, stage);
             match.setVenue(venue);
             match.setApiFixtureId(apiFixtureId);
+            match.setGroupName(groupName);
             // Fix 1: don't mark finished when knockoutWinner is missing — wait for complete data
             if (canMarkFinished(type, finished, homeScore, knockoutWinner)) {
                 match.setHomeScore(homeScore);
@@ -121,6 +125,7 @@ class WorldCupSyncPersister {
         match.setVenue(venue);
         match.setStage(stage);
         match.setType(type);
+        match.setGroupName(groupName);
 
         // Fix 1: only mark finished when result data is complete
         if (!match.isFinished() && canMarkFinished(type, finished, homeScore, knockoutWinner)) {
@@ -152,6 +157,18 @@ class WorldCupSyncPersister {
             case "Final"         -> MatchStage.FINAL;
             default              -> MatchStage.GROUP;
         };
+    }
+
+    // API-Football group rounds look like "Group A - 1"; pull out the label.
+    private static final Pattern GROUP_PATTERN =
+            Pattern.compile("Group\\s+([A-Z0-9]+)", Pattern.CASE_INSENSITIVE);
+
+    private String toGroup(String round, MatchStage stage) {
+        if (stage != MatchStage.GROUP || round == null) {
+            return null;
+        }
+        Matcher matcher = GROUP_PATTERN.matcher(round);
+        return matcher.find() ? matcher.group(1).toUpperCase() : null;
     }
 
     private boolean isFinished(String status) {
