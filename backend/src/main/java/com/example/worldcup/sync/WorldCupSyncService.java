@@ -48,45 +48,39 @@ public class WorldCupSyncService {
 
     private List<JsonNode> fetchAllFixtures() {
         List<JsonNode> all = new ArrayList<>();
-        int page = 1;
-        while (true) {
-            String url = API_BASE + "/fixtures?league=" + LEAGUE_ID + "&season=" + SEASON + "&page=" + page;
-            JsonNode body;
-            try {
-                body = restClient.get()
-                        .uri(url)
-                        .header("x-apisports-key", apiKey)
-                        .retrieve()
-                        .body(JsonNode.class);
-            } catch (RestClientException ex) {
-                // Timeout, connection refused, non-2xx from API-Football, etc.
-                throw new ApiException(HttpStatus.BAD_GATEWAY,
-                        "Could not reach API-Football: " + ex.getMessage());
-            }
 
-            if (body == null) break;
+        // API-Football's /fixtures endpoint returns every fixture for a
+        // league+season in a single response — it does NOT paginate, and
+        // sending a `page` parameter fails with
+        // {"page":"The Page field do not exist."}. So we make one request.
+        String url = API_BASE + "/fixtures?league=" + LEAGUE_ID + "&season=" + SEASON;
+        JsonNode body;
+        try {
+            body = restClient.get()
+                    .uri(url)
+                    .header("x-apisports-key", apiKey)
+                    .retrieve()
+                    .body(JsonNode.class);
+        } catch (RestClientException ex) {
+            // Timeout, connection refused, non-2xx from API-Football, etc.
+            throw new ApiException(HttpStatus.BAD_GATEWAY,
+                    "Could not reach API-Football: " + ex.getMessage());
+        }
 
-            JsonNode errors = body.get("errors");
-            if (errors != null && !errors.isEmpty() && !(errors.isObject() && errors.isEmpty())) {
-                // e.g. invalid key, or the plan doesn't cover league/season.
-                throw new ApiException(HttpStatus.BAD_GATEWAY,
-                        "API-Football returned an error: " + errors);
-            }
+        if (body == null) {
+            return all;
+        }
 
-            JsonNode response = body.get("response");
-            if (response == null || response.isEmpty()) break;
+        JsonNode errors = body.get("errors");
+        if (errors != null && !errors.isEmpty() && !(errors.isObject() && errors.isEmpty())) {
+            // e.g. invalid key, or the plan doesn't cover league/season.
+            throw new ApiException(HttpStatus.BAD_GATEWAY,
+                    "API-Football returned an error: " + errors);
+        }
+
+        JsonNode response = body.get("response");
+        if (response != null) {
             response.forEach(all::add);
-
-            int totalPages = body.at("/paging/total").asInt(1);
-            if (page >= totalPages) break;
-            page++;
-
-            try {
-                Thread.sleep(1_000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
         }
         return all;
     }
