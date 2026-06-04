@@ -9,7 +9,7 @@
       </h3>
     </div>
     <div class="meta">
-      <span>{{ match.kickoffAt | date:'medium' }}</span>
+      <span>{{ match.kickoffAt | date:'MMM d, y, HH:mm' }}</span>
       <span class="badge" [class.badge--open]="!match.locked">
         {{ match.locked ? 'Locked' : 'Open' }}
       </span>
@@ -84,7 +84,7 @@
         <p class="feedback" [class.feedback--error]="f.kind === 'error'">{{ f.message }}</p>
       } @else if (prediction) {
         <p class="feedback feedback--muted">
-          Saved {{ prediction.updatedAt | date:'medium' }}
+          Saved {{ prediction.updatedAt | date:'MMM d, y, HH:mm' }}
         </p>
       }
     </div>

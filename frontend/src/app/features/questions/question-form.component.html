@@ -7,7 +7,7 @@
         <span class="badge badge--locked">Locked</span>
       } @else {
         <span class="deadline">
-          Closes {{ question.deadline | date:'medium' }}
+          Closes {{ question.deadline | date:'MMM d, y, HH:mm' }}
         </span>
       }
     </div>
@@ -55,7 +55,7 @@
       <p class="feedback feedback--error">Please enter an answer.</p>
     } @else if (savedAnswer) {
       <p class="feedback feedback--muted">
-        Saved {{ savedAnswer.updatedAt | date:'medium' }}
+        Saved {{ savedAnswer.updatedAt | date:'MMM d, y, HH:mm' }}
       </p>
     }
   }

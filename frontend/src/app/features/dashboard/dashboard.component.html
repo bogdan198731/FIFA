@@ -70,7 +70,7 @@
                       {{ teamFlag(match.homeTeam) }} {{ match.homeTeam }} vs
                       {{ teamFlag(match.awayTeam) }} {{ match.awayTeam }}
                     </strong>
-                    <span>{{ match.stage.replaceAll('_', ' ') }} - {{ match.kickoffAt | date:'medium' }}</span>
+                    <span>{{ match.stage.replaceAll('_', ' ') }} - {{ match.kickoffAt | date:'MMM d, y, HH:mm' }}</span>
                   </div>
                   <span class="pill">{{ match.locked ? 'Locked' : 'Open' }}</span>
                 </article>
