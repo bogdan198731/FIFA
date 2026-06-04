@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,6 +79,11 @@ class WorldCupSyncPersister {
         MatchStage stage = toStage(round);
         MatchType type = stage == MatchStage.GROUP ? MatchType.REGULAR : MatchType.KNOCKOUT;
         String groupName = toGroup(round, stage);
+        // The provider's round is a generic "Group Stage - N" (no letter), so
+        // fall back to the tournament's team → group mapping.
+        if (groupName == null && stage == MatchStage.GROUP) {
+            groupName = groupForTeams(homeTeam, awayTeam);
+        }
 
         String status = fixNode.at("/status/short").asText("");
         boolean finished = isFinished(status);
@@ -172,6 +179,43 @@ class WorldCupSyncPersister {
         }
         Matcher matcher = GROUP_PATTERN.matcher(round);
         return matcher.find() ? matcher.group(1).toUpperCase() : null;
+    }
+
+    /**
+     * WC 2026 team → group (A–L). The provider doesn't put the group letter in
+     * the fixture round, so the sync derives it from the teams. Team names are
+     * lower-cased keys to tolerate casing; adjust them to match the exact names
+     * your provider returns / the official draw if needed.
+     */
+    private static final Map<String, String> TEAM_GROUP = new HashMap<>();
+
+    static {
+        putGroup("A", "Brazil", "Serbia", "Switzerland", "Cameroon");
+        putGroup("B", "France", "Australia", "Denmark", "Tunisia");
+        putGroup("C", "Argentina", "Mexico", "Poland", "Saudi Arabia");
+        putGroup("D", "England", "USA", "Netherlands", "Senegal");
+        putGroup("E", "Spain", "Germany", "Japan", "Costa Rica");
+        putGroup("F", "Portugal", "Uruguay", "South Korea", "Ghana");
+        putGroup("G", "Belgium", "Croatia", "Morocco", "Canada");
+        putGroup("H", "Italy", "Colombia", "Ecuador", "Qatar");
+        putGroup("I", "Nigeria", "Egypt", "Iran", "Wales");
+        putGroup("J", "Sweden", "Norway", "Austria", "Ukraine");
+        putGroup("K", "Peru", "Chile", "Algeria", "Ivory Coast");
+        putGroup("L", "Paraguay", "Scotland", "Turkey", "Greece");
+    }
+
+    private static void putGroup(String group, String... teams) {
+        for (String team : teams) {
+            TEAM_GROUP.put(team.toLowerCase(), group);
+        }
+    }
+
+    static String groupForTeams(String homeTeam, String awayTeam) {
+        String group = homeTeam == null ? null : TEAM_GROUP.get(homeTeam.toLowerCase());
+        if (group == null && awayTeam != null) {
+            group = TEAM_GROUP.get(awayTeam.toLowerCase());
+        }
+        return group;
     }
 
     private boolean isFinished(String status) {
