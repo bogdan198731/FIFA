@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,12 +36,12 @@ class WorldCupSyncPersister {
     }
 
     @Transactional
-    SyncResult persistAll(List<JsonNode> fixtures) {
+    SyncResult persistAll(List<JsonNode> fixtures, Map<String, String> teamGroups) {
         int created = 0, updated = 0, unchanged = 0;
 
         for (JsonNode fixture : fixtures) {
             try {
-                switch (upsertFixture(fixture)) {
+                switch (upsertFixture(fixture, teamGroups)) {
                     case CREATED   -> created++;
                     case UPDATED   -> updated++;
                     case UNCHANGED -> unchanged++;
@@ -54,7 +55,7 @@ class WorldCupSyncPersister {
         return new SyncResult(created, updated, unchanged);
     }
 
-    private SyncOutcome upsertFixture(JsonNode f) {
+    private SyncOutcome upsertFixture(JsonNode f, Map<String, String> teamGroups) {
         JsonNode fixNode = f.get("fixture");
         if (fixNode == null) return SyncOutcome.UNCHANGED;
 
@@ -77,6 +78,11 @@ class WorldCupSyncPersister {
         MatchStage stage = toStage(round);
         MatchType type = stage == MatchStage.GROUP ? MatchType.REGULAR : MatchType.KNOCKOUT;
         String groupName = toGroup(round, stage);
+        // The provider's round is a generic "Group Stage - N" (no letter), so
+        // fall back to the team → group map fetched from /standings.
+        if (groupName == null && stage == MatchStage.GROUP) {
+            groupName = groupForTeams(teamGroups, homeTeam, awayTeam);
+        }
 
         String status = fixNode.at("/status/short").asText("");
         boolean finished = isFinished(status);
@@ -159,16 +165,39 @@ class WorldCupSyncPersister {
         };
     }
 
-    // API-Football group rounds look like "Group A - 1"; pull out the label.
+    // API-Football group rounds look like "Group A - 1" — capture the single
+    // group label. The trailing lookahead requires that label to stand alone,
+    // so a generic round like "Group Stage - 1" does NOT match (otherwise it
+    // would yield "STAGE"). Returns null when there's no real group letter.
     private static final Pattern GROUP_PATTERN =
-            Pattern.compile("Group\\s+([A-Z0-9]+)", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("\\bGroup\\s+([A-Za-z0-9])(?![A-Za-z0-9])", Pattern.CASE_INSENSITIVE);
 
-    private String toGroup(String round, MatchStage stage) {
-        if (stage != MatchStage.GROUP || round == null) {
+    static String toGroup(String round, MatchStage stage) {
+        if (stage != MatchStage.GROUP) {
             return null;
         }
-        Matcher matcher = GROUP_PATTERN.matcher(round);
+        return extractGroupLabel(round);
+    }
+
+    /** Pull the single group label out of a "Group A …" string (else null). */
+    static String extractGroupLabel(String text) {
+        if (text == null) {
+            return null;
+        }
+        Matcher matcher = GROUP_PATTERN.matcher(text);
         return matcher.find() ? matcher.group(1).toUpperCase() : null;
+    }
+
+    /** Group of either team from the standings-derived map (home wins ties). */
+    static String groupForTeams(Map<String, String> teamGroups, String homeTeam, String awayTeam) {
+        if (teamGroups == null) {
+            return null;
+        }
+        String group = homeTeam == null ? null : teamGroups.get(homeTeam.toLowerCase());
+        if (group == null && awayTeam != null) {
+            group = teamGroups.get(awayTeam.toLowerCase());
+        }
+        return group;
     }
 
     private boolean isFinished(String status) {
