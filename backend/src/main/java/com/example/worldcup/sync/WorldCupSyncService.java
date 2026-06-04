@@ -12,7 +12,9 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WorldCupSyncService {
@@ -42,8 +44,57 @@ public class WorldCupSyncService {
                     "External API sync is not configured. Set the API_FOOTBALL_KEY "
                             + "environment variable on the server.");
         }
+        // The fixtures endpoint's round is a generic "Group Stage - N" with no
+        // group letter, so we pull the real team → group map from /standings.
+        Map<String, String> teamGroups = fetchTeamGroups();
         List<JsonNode> fixtures = fetchAllFixtures();
-        return persister.persistAll(fixtures);
+        return persister.persistAll(fixtures, teamGroups);
+    }
+
+    /**
+     * Team name (lower-cased) → group label (e.g. "A") from API-Football's
+     * standings, which carry each team's actual group. Degrades to an empty
+     * map (matches stay ungrouped) if standings aren't available on the plan,
+     * rather than failing the whole sync.
+     */
+    private Map<String, String> fetchTeamGroups() {
+        Map<String, String> teamGroups = new HashMap<>();
+        JsonNode body;
+        try {
+            body = restClient.get()
+                    .uri(API_BASE + "/standings?league=" + LEAGUE_ID + "&season=" + SEASON)
+                    .header("x-apisports-key", apiKey)
+                    .retrieve()
+                    .body(JsonNode.class);
+        } catch (RestClientException ex) {
+            log.warn("Could not fetch standings for group assignments: {}", ex.getMessage());
+            return teamGroups;
+        }
+        if (body == null) {
+            return teamGroups;
+        }
+        JsonNode errors = body.get("errors");
+        if (errors != null && !errors.isEmpty() && !(errors.isObject() && errors.isEmpty())) {
+            log.warn("Standings unavailable for group assignments: {}", errors);
+            return teamGroups;
+        }
+
+        // response[0].league.standings is an array of groups; each entry has a
+        // team.name and a "group" like "Group A".
+        JsonNode standings = body.at("/response/0/league/standings");
+        if (standings.isArray()) {
+            for (JsonNode group : standings) {
+                for (JsonNode entry : group) {
+                    String teamName = entry.at("/team/name").asText(null);
+                    String label = WorldCupSyncPersister.extractGroupLabel(entry.at("/group").asText(null));
+                    if (teamName != null && label != null) {
+                        teamGroups.put(teamName.toLowerCase(), label);
+                    }
+                }
+            }
+        }
+        log.info("Fetched group assignments for {} teams from standings.", teamGroups.size());
+        return teamGroups;
     }
 
     private List<JsonNode> fetchAllFixtures() {

@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,12 +36,12 @@ class WorldCupSyncPersister {
     }
 
     @Transactional
-    SyncResult persistAll(List<JsonNode> fixtures) {
+    SyncResult persistAll(List<JsonNode> fixtures, Map<String, String> teamGroups) {
         int created = 0, updated = 0, unchanged = 0;
 
         for (JsonNode fixture : fixtures) {
             try {
-                switch (upsertFixture(fixture)) {
+                switch (upsertFixture(fixture, teamGroups)) {
                     case CREATED   -> created++;
                     case UPDATED   -> updated++;
                     case UNCHANGED -> unchanged++;
@@ -56,7 +55,7 @@ class WorldCupSyncPersister {
         return new SyncResult(created, updated, unchanged);
     }
 
-    private SyncOutcome upsertFixture(JsonNode f) {
+    private SyncOutcome upsertFixture(JsonNode f, Map<String, String> teamGroups) {
         JsonNode fixNode = f.get("fixture");
         if (fixNode == null) return SyncOutcome.UNCHANGED;
 
@@ -80,9 +79,9 @@ class WorldCupSyncPersister {
         MatchType type = stage == MatchStage.GROUP ? MatchType.REGULAR : MatchType.KNOCKOUT;
         String groupName = toGroup(round, stage);
         // The provider's round is a generic "Group Stage - N" (no letter), so
-        // fall back to the tournament's team → group mapping.
+        // fall back to the team → group map fetched from /standings.
         if (groupName == null && stage == MatchStage.GROUP) {
-            groupName = groupForTeams(homeTeam, awayTeam);
+            groupName = groupForTeams(teamGroups, homeTeam, awayTeam);
         }
 
         String status = fixNode.at("/status/short").asText("");
@@ -174,46 +173,29 @@ class WorldCupSyncPersister {
             Pattern.compile("\\bGroup\\s+([A-Za-z0-9])(?![A-Za-z0-9])", Pattern.CASE_INSENSITIVE);
 
     static String toGroup(String round, MatchStage stage) {
-        if (stage != MatchStage.GROUP || round == null) {
+        if (stage != MatchStage.GROUP) {
             return null;
         }
-        Matcher matcher = GROUP_PATTERN.matcher(round);
+        return extractGroupLabel(round);
+    }
+
+    /** Pull the single group label out of a "Group A …" string (else null). */
+    static String extractGroupLabel(String text) {
+        if (text == null) {
+            return null;
+        }
+        Matcher matcher = GROUP_PATTERN.matcher(text);
         return matcher.find() ? matcher.group(1).toUpperCase() : null;
     }
 
-    /**
-     * WC 2026 team → group (A–L). The provider doesn't put the group letter in
-     * the fixture round, so the sync derives it from the teams. Team names are
-     * lower-cased keys to tolerate casing; adjust them to match the exact names
-     * your provider returns / the official draw if needed.
-     */
-    private static final Map<String, String> TEAM_GROUP = new HashMap<>();
-
-    static {
-        putGroup("A", "Brazil", "Serbia", "Switzerland", "Cameroon");
-        putGroup("B", "France", "Australia", "Denmark", "Tunisia");
-        putGroup("C", "Argentina", "Mexico", "Poland", "Saudi Arabia");
-        putGroup("D", "England", "USA", "Netherlands", "Senegal");
-        putGroup("E", "Spain", "Germany", "Japan", "Costa Rica");
-        putGroup("F", "Portugal", "Uruguay", "South Korea", "Ghana");
-        putGroup("G", "Belgium", "Croatia", "Morocco", "Canada");
-        putGroup("H", "Italy", "Colombia", "Ecuador", "Qatar");
-        putGroup("I", "Nigeria", "Egypt", "Iran", "Wales");
-        putGroup("J", "Sweden", "Norway", "Austria", "Ukraine");
-        putGroup("K", "Peru", "Chile", "Algeria", "Ivory Coast");
-        putGroup("L", "Paraguay", "Scotland", "Turkey", "Greece");
-    }
-
-    private static void putGroup(String group, String... teams) {
-        for (String team : teams) {
-            TEAM_GROUP.put(team.toLowerCase(), group);
+    /** Group of either team from the standings-derived map (home wins ties). */
+    static String groupForTeams(Map<String, String> teamGroups, String homeTeam, String awayTeam) {
+        if (teamGroups == null) {
+            return null;
         }
-    }
-
-    static String groupForTeams(String homeTeam, String awayTeam) {
-        String group = homeTeam == null ? null : TEAM_GROUP.get(homeTeam.toLowerCase());
+        String group = homeTeam == null ? null : teamGroups.get(homeTeam.toLowerCase());
         if (group == null && awayTeam != null) {
-            group = TEAM_GROUP.get(awayTeam.toLowerCase());
+            group = teamGroups.get(awayTeam.toLowerCase());
         }
         return group;
     }
