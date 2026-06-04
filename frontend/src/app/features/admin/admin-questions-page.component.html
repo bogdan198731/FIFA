@@ -1,0 +1,64 @@
+<section class="admin-page">
+  <header class="header">
+    <h1>Tournament Questions</h1>
+    <p>Set how options are resolved for each question — static list or live from the database.</p>
+  </header>
+
+  <div class="list">
+    @for (q of questions(); track q.id) {
+      <div class="card">
+        <div class="card__body">
+          <p class="card__text">{{ q.text }}</p>
+          <span class="card__meta">
+            {{ q.points }} pts ·
+            @if (q.locked) { <span class="badge badge--locked">Locked</span> }
+            @else { closes {{ q.deadline | date:'MMM d, HH:mm' }} }
+          </span>
+        </div>
+
+        <div class="card__controls">
+          <div class="source-group">
+            @for (opt of sourceOptions; track opt.value) {
+              <label class="source-option" [class.source-option--active]="q.optionSource === opt.value">
+                <input
+                  type="radio"
+                  [name]="'source-' + q.id"
+                  [value]="opt.value"
+                  [checked]="q.optionSource === opt.value"
+                  [disabled]="saving() === q.id"
+                  (change)="updateSource(q, opt.value)"
+                />
+                <span class="source-option__label">{{ opt.label }}</span>
+                <span class="source-option__desc">{{ opt.description }}</span>
+              </label>
+            }
+          </div>
+
+          @if (saving() === q.id) {
+            <p class="status status--saving">Saving…</p>
+          } @else if (feedback()?.id === q.id) {
+            <p class="status" [class.status--ok]="feedback()!.ok" [class.status--err]="!feedback()!.ok">
+              {{ feedback()!.msg }}
+            </p>
+          }
+
+          @if (q.options?.length && q.optionSource === 'STATIC') {
+            <details class="options-preview">
+              <summary>{{ q.options!.length }} static options</summary>
+              <ul>
+                @for (opt of q.options!; track opt) {
+                  <li>{{ opt }}</li>
+                }
+              </ul>
+            </details>
+          } @else if (q.optionSource !== 'STATIC') {
+            <p class="options-preview__dynamic">
+              ✓ {{ q.options?.length ?? 0 }} options resolved live from
+              {{ q.optionSource === 'TEAMS' ? 'matches table' : 'players table' }}
+            </p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

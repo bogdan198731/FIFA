@@ -1,6 +1,7 @@
 package com.example.worldcup.question;
 
 import com.example.worldcup.common.ApiException;
+import com.example.worldcup.match.MatchRepository;
 import com.example.worldcup.question.dto.SubmitAnswerRequest;
 import com.example.worldcup.question.dto.TournamentAnswerResponse;
 import com.example.worldcup.question.dto.TournamentQuestionResponse;
@@ -16,6 +17,7 @@ import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 
 @Service
 public class TournamentQuestionService {
@@ -23,13 +25,16 @@ public class TournamentQuestionService {
     private final TournamentQuestionRepository questionRepository;
     private final TournamentAnswerRepository answerRepository;
     private final UserRepository userRepository;
+    private final MatchRepository matchRepository;
 
     public TournamentQuestionService(TournamentQuestionRepository questionRepository,
                                      TournamentAnswerRepository answerRepository,
-                                     UserRepository userRepository) {
+                                     UserRepository userRepository,
+                                     MatchRepository matchRepository) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.userRepository = userRepository;
+        this.matchRepository = matchRepository;
     }
 
     @Transactional(readOnly = true)
@@ -38,8 +43,21 @@ public class TournamentQuestionService {
         return questionRepository.findAll().stream()
                 .sorted(Comparator.comparing(TournamentQuestion::getDeadline)
                         .thenComparing(TournamentQuestion::getId))
-                .map(q -> TournamentQuestionResponse.from(q, now))
+                .map(q -> TournamentQuestionResponse.from(q, now, resolveOptions(q)))
                 .toList();
+    }
+
+    private List<String> resolveOptions(TournamentQuestion q) {
+        if (q.getOptionSource() == null || q.getOptionSource() == OptionSource.STATIC) {
+            return q.getOptions();
+        }
+        if (q.getOptionSource() == OptionSource.TEAMS) {
+            TreeSet<String> teams = new TreeSet<>(matchRepository.findAllDistinctHomeTeams());
+            teams.addAll(matchRepository.findAllDistinctAwayTeams());
+            return List.copyOf(teams);
+        }
+        // PLAYERS — not yet implemented, fall back to static
+        return q.getOptions();
     }
 
     @Transactional(readOnly = true)
@@ -99,8 +117,19 @@ public class TournamentQuestionService {
         }
     }
 
+    @Transactional
+    public TournamentQuestionResponse updateOptionSource(Long questionId, OptionSource source) {
+        TournamentQuestion question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Question not found"));
+        question.setOptionSource(source);
+        if (source != OptionSource.STATIC) {
+            question.setOptions(null);
+        }
+        return TournamentQuestionResponse.from(question, Instant.now(), resolveOptions(question));
+    }
+
     private void ensureValidOption(TournamentQuestion question, String answer) {
-        List<String> options = question.getOptions();
+        List<String> options = resolveOptions(question);
         if (options != null && !options.isEmpty() && !options.contains(answer)) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "Answer must be one of the available options");

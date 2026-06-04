@@ -1,3 +1,5 @@
+export type OptionSource = 'STATIC' | 'TEAMS' | 'PLAYERS';
+
 export interface TournamentQuestion {
   id: number;
   text: string;
@@ -6,6 +8,7 @@ export interface TournamentQuestion {
   locked: boolean;
   correctAnswer: string | null;
   options: string[] | null;
+  optionSource: OptionSource;
 }
 
 export interface TournamentAnswer {

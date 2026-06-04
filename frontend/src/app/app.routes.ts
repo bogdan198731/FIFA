@@ -105,5 +105,13 @@ export const routes: Routes = [
         (m) => m.AdminRecalculateScoresPageComponent
       )
   },
+  {
+    path: 'admin/questions',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-questions-page.component').then(
+        (m) => m.AdminQuestionsPageComponent
+      )
+  },
   { path: '**', redirectTo: '' }
 ];
