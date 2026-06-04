@@ -25,9 +25,9 @@ import java.util.Map;
  * the ones from {@code V2__seed_data.sql}) and inserts the rest of each group's
  * round-robin only when missing, so repeated restarts don't duplicate.
  *
- * <p>This is illustrative demo data, <em>not</em> the official WC 2026 draw.
- * For real fixtures, sync from the external API (when the provider exposes the
- * group in the round) or assign groups in the admin Matches screen.
+ * <p>The 12 groups (A–L) of four match the WC 2026 format. Team→group
+ * assignments are illustrative — adjust the names below to match the official
+ * draw / the exact team names your synced fixtures use if you need it precise.
  */
 @Component
 @Profile("dev")
@@ -35,7 +35,7 @@ public class DevGroupMatchSeeder implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(DevGroupMatchSeeder.class);
 
-    /** Demo groups → their four teams. */
+    /** 12 groups → their four teams (48 teams total, WC 2026 format). */
     private static final Map<String, List<String>> GROUPS = new LinkedHashMap<>();
 
     static {
@@ -43,6 +43,14 @@ public class DevGroupMatchSeeder implements ApplicationRunner {
         GROUPS.put("B", List.of("France", "Australia", "Denmark", "Tunisia"));
         GROUPS.put("C", List.of("Argentina", "Mexico", "Poland", "Saudi Arabia"));
         GROUPS.put("D", List.of("England", "USA", "Netherlands", "Senegal"));
+        GROUPS.put("E", List.of("Spain", "Germany", "Japan", "Costa Rica"));
+        GROUPS.put("F", List.of("Portugal", "Uruguay", "South Korea", "Ghana"));
+        GROUPS.put("G", List.of("Belgium", "Croatia", "Morocco", "Canada"));
+        GROUPS.put("H", List.of("Italy", "Colombia", "Ecuador", "Qatar"));
+        GROUPS.put("I", List.of("Nigeria", "Egypt", "Iran", "Wales"));
+        GROUPS.put("J", List.of("Sweden", "Norway", "Austria", "Ukraine"));
+        GROUPS.put("K", List.of("Peru", "Chile", "Algeria", "Ivory Coast"));
+        GROUPS.put("L", List.of("Paraguay", "Scotland", "Turkey", "Greece"));
     }
 
     private final MatchRepository matchRepository;
