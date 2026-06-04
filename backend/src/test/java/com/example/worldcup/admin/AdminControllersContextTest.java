@@ -40,7 +40,10 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.flyway.enabled=false",
         "app.jwt.secret=test-secret-that-is-definitely-at-least-32-bytes-long",
         "app.admin.name=root",
-        "app.admin.password=root-password"
+        "app.admin.password=root-password",
+        // Pin to empty so the test is hermetic — otherwise application.yml's
+        // ${API_FOOTBALL_KEY:} resolves from the ambient shell environment.
+        "app.api-football.key="
 })
 class AdminControllersContextTest {
 

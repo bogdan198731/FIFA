@@ -159,11 +159,14 @@ class WorldCupSyncPersister {
         };
     }
 
-    // API-Football group rounds look like "Group A - 1"; pull out the label.
+    // API-Football group rounds look like "Group A - 1" — capture the single
+    // group label. The trailing lookahead requires that label to stand alone,
+    // so a generic round like "Group Stage - 1" does NOT match (otherwise it
+    // would yield "STAGE"). Returns null when there's no real group letter.
     private static final Pattern GROUP_PATTERN =
-            Pattern.compile("Group\\s+([A-Z0-9]+)", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("\\bGroup\\s+([A-Za-z0-9])(?![A-Za-z0-9])", Pattern.CASE_INSENSITIVE);
 
-    private String toGroup(String round, MatchStage stage) {
+    static String toGroup(String round, MatchStage stage) {
         if (stage != MatchStage.GROUP || round == null) {
             return null;
         }
