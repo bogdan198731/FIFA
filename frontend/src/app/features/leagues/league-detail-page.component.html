@@ -1,0 +1,50 @@
+<section class="page">
+  <header class="header">
+    <a routerLink="/leagues" class="back-link">← My leagues</a>
+    <h1>League Standings</h1>
+    <p class="muted">Private leaderboard for this league.</p>
+  </header>
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-loading-spinner label="Loading standings" />
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }}</p>
+    }
+    @case ('ready') {
+      @if (entries().length === 0) {
+        <app-empty-state
+          title="No scores yet"
+          message="Standings will appear once predictions have been scored."
+        />
+      } @else {
+        <div class="table-wrap">
+          <table class="leaderboard">
+            <thead>
+              <tr>
+                <th scope="col" class="rank">#</th>
+                <th scope="col">Player</th>
+                <th scope="col" class="points">Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of entries(); track entry.userId) {
+                <tr [class.is-self]="entry.userId === currentUserId()">
+                  <td class="rank">{{ entry.rank }}</td>
+                  <td>
+                    <span class="name">{{ entry.username }}</span>
+                    @if (entry.userId === currentUserId()) {
+                      <span class="you">you</span>
+                    }
+                  </td>
+                  <td class="points">{{ entry.totalPoints }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  }
+</section>

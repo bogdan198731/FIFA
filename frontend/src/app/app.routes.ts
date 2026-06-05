@@ -113,5 +113,21 @@ export const routes: Routes = [
         (m) => m.AdminQuestionsPageComponent
       )
   },
+  {
+    path: 'leagues',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/leagues/leagues-page.component').then(
+        (m) => m.LeaguesPageComponent
+      )
+  },
+  {
+    path: 'leagues/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/leagues/league-detail-page.component').then(
+        (m) => m.LeagueDetailPageComponent
+      )
+  },
   { path: '**', redirectTo: '' }
 ];
