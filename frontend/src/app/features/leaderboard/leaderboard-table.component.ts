@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 
 import { AuthService } from '../../core/services/auth.service';
+import { I18nService } from '../../core/services/i18n.service';
 import { LeaderboardService } from '../../core/services/leaderboard.service';
 import { LeaderboardEntry } from '../../core/models/leaderboard.model';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -18,6 +19,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 export class LeaderboardTableComponent implements OnInit {
   private readonly leaderboardService = inject(LeaderboardService);
   private readonly auth = inject(AuthService);
+  readonly i18n = inject(I18nService);
 
   readonly entries = signal<LeaderboardEntry[]>([]);
   readonly state = signal<LoadState>('loading');

@@ -7,6 +7,7 @@ import {
   MatchStage,
   MatchPrediction
 } from '../../core/models/match-prediction.model';
+import { I18nService } from '../../core/services/i18n.service';
 import { MatchService } from '../../core/services/match.service';
 import { PredictionService } from '../../core/services/prediction.service';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -53,6 +54,7 @@ const STAGE_LABEL: Record<MatchStage, string> = {
 export class MatchPredictionsPageComponent implements OnInit {
   private readonly matchService = inject(MatchService);
   private readonly predictionService = inject(PredictionService);
+  readonly i18n = inject(I18nService);
 
   readonly matches = signal<Match[]>([]);
   readonly predictionsByMatchId = signal<Map<number, MatchPrediction>>(new Map());

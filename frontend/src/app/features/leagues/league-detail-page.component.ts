@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { I18nService } from '../../core/services/i18n.service';
 import { LeagueService } from '../../core/services/league.service';
 import { AuthService } from '../../core/services/auth.service';
 import { LeaderboardEntry } from '../../core/models/leaderboard.model';
@@ -19,6 +20,7 @@ export class LeagueDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly leagueService = inject(LeagueService);
   private readonly auth = inject(AuthService);
+  readonly i18n = inject(I18nService);
 
   readonly entries = signal<LeaderboardEntry[]>([]);
   readonly state = signal<LoadState>('loading');

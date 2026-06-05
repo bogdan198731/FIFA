@@ -17,6 +17,7 @@ import {
   Match,
   MatchPrediction
 } from '../../core/models/match-prediction.model';
+import { I18nService } from '../../core/services/i18n.service';
 import { PredictionService } from '../../core/services/prediction.service';
 import { teamFlag } from '../../shared/team-flags';
 
@@ -32,6 +33,7 @@ type FeedbackKind = 'success' | 'error';
 })
 export class MatchCardComponent implements OnChanges {
   private readonly predictionService = inject(PredictionService);
+  readonly i18n = inject(I18nService);
 
   @Input({ required: true }) match!: Match;
   @Input() prediction: MatchPrediction | null = null;

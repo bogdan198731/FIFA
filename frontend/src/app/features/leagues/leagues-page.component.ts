@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
+import { I18nService } from '../../core/services/i18n.service';
 import { LeagueService } from '../../core/services/league.service';
 import { PrivateLeague } from '../../core/models/league.model';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
@@ -17,6 +18,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 })
 export class LeaguesPageComponent implements OnInit {
   private readonly leagueService = inject(LeagueService);
+  readonly i18n = inject(I18nService);
 
   readonly leagues = signal<PrivateLeague[]>([]);
   readonly state = signal<LoadState>('loading');

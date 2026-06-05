@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { I18nService } from '../../../core/services/i18n.service';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  readonly i18n = inject(I18nService);
 
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);

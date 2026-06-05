@@ -1,12 +1,12 @@
 <section class="page">
   <header class="header">
-    <h1>Leaderboard</h1>
-    <p class="muted">Ranked by total points. Tied scores share a rank.</p>
+    <h1>{{ i18n.t()['leaderboard.title'] }}</h1>
+    <p class="muted">{{ i18n.t()['leaderboard.subtitle'] }}</p>
   </header>
 
   @switch (state()) {
     @case ('loading') {
-      <app-loading-spinner label="Loading leaderboard" />
+      <app-loading-spinner [label]="i18n.t()['leaderboard.loading']" />
     }
     @case ('error') {
       <p class="error" role="alert">{{ errorMessage() }} Try refreshing in a moment.</p>
@@ -14,17 +14,17 @@
     @case ('ready') {
       @if (entries().length === 0) {
         <app-empty-state
-          title="No players yet"
-          message="The leaderboard will appear after players register and scores are calculated."
+          [title]="i18n.t()['leaderboard.empty.title']"
+          [message]="i18n.t()['leaderboard.empty.message']"
         />
       } @else {
         <div class="table-wrap">
           <table class="leaderboard">
             <thead>
               <tr>
-                <th scope="col" class="rank">#</th>
-                <th scope="col">Player</th>
-                <th scope="col" class="points">Points</th>
+                <th scope="col" class="rank">{{ i18n.t()['leaderboard.rank'] }}</th>
+                <th scope="col">{{ i18n.t()['leaderboard.player'] }}</th>
+                <th scope="col" class="points">{{ i18n.t()['leaderboard.points'] }}</th>
               </tr>
             </thead>
             <tbody>

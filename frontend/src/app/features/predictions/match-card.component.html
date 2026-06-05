@@ -11,7 +11,7 @@
     <div class="meta">
       <span>{{ match.kickoffAt | date:'MMM d, y, HH:mm' }}</span>
       <span class="badge" [class.badge--open]="!match.locked">
-        {{ match.locked ? 'Locked' : 'Open' }}
+        {{ match.locked ? i18n.t()['match.locked'] : i18n.t()['match.open'] }}
       </span>
     </div>
   </header>
@@ -22,24 +22,24 @@
 
   @if (match.locked) {
     <dl class="locked-view">
-      <dt>Your prediction</dt>
+      <dt>{{ i18n.t()['match.yourPrediction'] }}</dt>
       <dd>
         @if (prediction) {
           {{ prediction.homeScore }} - {{ prediction.awayScore }}
           @if (prediction.qualifiedTeam) {
-            <span>({{ prediction.qualifiedTeam }} qualifies)</span>
+            <span>({{ prediction.qualifiedTeam }} {{ i18n.t()['match.qualifies'] }})</span>
           }
         } @else {
-          No prediction submitted
+          {{ i18n.t()['match.noPrediction'] }}
         }
       </dd>
 
       @if (match.finished) {
-        <dt>Result</dt>
+        <dt>{{ i18n.t()['match.result'] }}</dt>
         <dd>
           {{ match.homeScore }} - {{ match.awayScore }}
           @if (match.knockoutWinner) {
-            <span>({{ match.knockoutWinner }} qualified)</span>
+            <span>({{ match.knockoutWinner }} {{ i18n.t()['match.qualified'] }})</span>
           }
         </dd>
       }
@@ -54,22 +54,22 @@
         type="number" min="0" inputmode="numeric"
         class="score-input"
         [formControl]="homeScoreControl"
-        [attr.aria-label]="match.homeTeam + ' goals'"
+        [attr.aria-label]="match.homeTeam + ' ' + i18n.t()['match.goalsFor']"
       />
       <span class="dash" aria-hidden="true">-</span>
       <input
         type="number" min="0" inputmode="numeric"
         class="score-input"
         [formControl]="awayScoreControl"
-        [attr.aria-label]="match.awayTeam + ' goals'"
+        [attr.aria-label]="match.awayTeam + ' ' + i18n.t()['match.goalsFor']"
       />
     </div>
 
     @if (match.matchType === 'KNOCKOUT') {
       <label class="qualified">
-        <span>Qualified team</span>
+        <span>{{ i18n.t()['match.qualifiedTeam'] }}</span>
         <select [formControl]="qualifiedTeamControl">
-          <option value="">Choose team</option>
+          <option value="">{{ i18n.t()['match.chooseTeam'] }}</option>
           <option [value]="match.homeTeam">{{ match.homeTeam }}</option>
           <option [value]="match.awayTeam">{{ match.awayTeam }}</option>
         </select>
@@ -78,13 +78,13 @@
 
     <div class="actions">
       <button type="button" class="primary" [disabled]="submitting()" (click)="save()">
-        {{ submitting() ? 'Saving...' : (prediction ? 'Update' : 'Save') }}
+        {{ submitting() ? i18n.t()['match.saving'] : (prediction ? i18n.t()['match.update'] : i18n.t()['match.save']) }}
       </button>
       @if (feedback(); as f) {
         <p class="feedback" [class.feedback--error]="f.kind === 'error'">{{ f.message }}</p>
       } @else if (prediction) {
         <p class="feedback feedback--muted">
-          Saved {{ prediction.updatedAt | date:'MMM d, y, HH:mm' }}
+          {{ i18n.t()['match.savedAt'] }} {{ prediction.updatedAt | date:'MMM d, y, HH:mm' }}
         </p>
       }
     </div>

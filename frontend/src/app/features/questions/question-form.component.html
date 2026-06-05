@@ -2,12 +2,12 @@
   <header class="question-header">
     <h3>{{ question.text }}</h3>
     <div class="meta">
-      <span class="points">{{ question.points }} pts</span>
+      <span class="points">{{ question.points }} {{ i18n.t()['questions.pts'] }}</span>
       @if (question.locked) {
-        <span class="badge badge--locked">Locked</span>
+        <span class="badge badge--locked">{{ i18n.t()['questions.locked'] }}</span>
       } @else {
         <span class="deadline">
-          Closes {{ question.deadline | date:'MMM d, y, HH:mm' }}
+          {{ i18n.t()['questions.closes'] }} {{ question.deadline | date:'MMM d, y, HH:mm' }}
         </span>
       }
     </div>
@@ -15,11 +15,11 @@
 
   @if (question.locked) {
     <dl class="locked-view">
-      <dt>Your answer</dt>
-      <dd>{{ savedAnswer?.answer ?? '— no answer submitted —' }}</dd>
+      <dt>{{ i18n.t()['questions.yourAnswer'] }}</dt>
+      <dd>{{ savedAnswer?.answer ?? i18n.t()['questions.noAnswer'] }}</dd>
 
       @if (question.correctAnswer) {
-        <dt>Correct answer</dt>
+        <dt>{{ i18n.t()['questions.correctAnswer'] }}</dt>
         <dd class="correct">{{ question.correctAnswer }}</dd>
       }
     </dl>
@@ -30,7 +30,7 @@
           [formControl]="answerControl"
           [attr.aria-label]="question.text"
         >
-          <option value="">Choose your answer</option>
+          <option value="">{{ i18n.t()['questions.choose'] }}</option>
           @for (opt of question.options; track opt) {
             <option [value]="opt">{{ opt }}</option>
           }
@@ -40,22 +40,22 @@
           type="text"
           [formControl]="answerControl"
           [attr.aria-label]="question.text"
-          placeholder="Type your answer"
+          [placeholder]="i18n.t()['questions.typeAnswer']"
           maxlength="200"
         />
       }
       <button type="button" class="primary" [disabled]="submitting()" (click)="save()">
-        {{ submitting() ? 'Saving…' : (savedAnswer ? 'Update' : 'Save') }}
+        {{ submitting() ? i18n.t()['questions.saving'] : (savedAnswer ? i18n.t()['questions.update'] : i18n.t()['questions.save']) }}
       </button>
     </div>
 
     @if (feedback(); as f) {
       <p class="feedback" [class.feedback--error]="f.kind === 'error'">{{ f.message }}</p>
     } @else if (answerControl.invalid && answerControl.touched) {
-      <p class="feedback feedback--error">Please enter an answer.</p>
+      <p class="feedback feedback--error">{{ i18n.t()['questions.error'] }}</p>
     } @else if (savedAnswer) {
       <p class="feedback feedback--muted">
-        Saved {{ savedAnswer.updatedAt | date:'MMM d, y, HH:mm' }}
+        {{ i18n.t()['match.savedAt'] }} {{ savedAnswer.updatedAt | date:'MMM d, y, HH:mm' }}
       </p>
     }
   }

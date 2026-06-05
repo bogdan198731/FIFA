@@ -13,6 +13,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 
+import { I18nService } from '../../core/services/i18n.service';
 import { QuestionService } from '../../core/services/question.service';
 import {
   TournamentAnswer,
@@ -31,6 +32,7 @@ type FeedbackKind = 'success' | 'error';
 })
 export class QuestionFormComponent implements OnChanges {
   private readonly questionService = inject(QuestionService);
+  readonly i18n = inject(I18nService);
 
   @Input({ required: true }) question!: TournamentQuestion;
   @Input() savedAnswer: TournamentAnswer | null = null;

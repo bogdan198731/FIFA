@@ -1,8 +1,8 @@
 <section class="page">
   <header class="header">
-    <a routerLink="/leagues" class="back-link">← My leagues</a>
-    <h1>League Standings</h1>
-    <p class="muted">Private leaderboard for this league.</p>
+    <a routerLink="/leagues" class="back-link">{{ i18n.t()['league.back'] }}</a>
+    <h1>{{ i18n.t()['league.title'] }}</h1>
+    <p class="muted">{{ i18n.t()['league.subtitle'] }}</p>
   </header>
 
   @switch (state()) {
@@ -15,17 +15,17 @@
     @case ('ready') {
       @if (entries().length === 0) {
         <app-empty-state
-          title="No scores yet"
-          message="Standings will appear once predictions have been scored."
+          [title]="i18n.t()['league.empty.title']"
+          [message]="i18n.t()['league.empty.message']"
         />
       } @else {
         <div class="table-wrap">
           <table class="leaderboard">
             <thead>
               <tr>
-                <th scope="col" class="rank">#</th>
-                <th scope="col">Player</th>
-                <th scope="col" class="points">Points</th>
+                <th scope="col" class="rank">{{ i18n.t()['leaderboard.rank'] }}</th>
+                <th scope="col">{{ i18n.t()['leaderboard.player'] }}</th>
+                <th scope="col" class="points">{{ i18n.t()['leaderboard.points'] }}</th>
               </tr>
             </thead>
             <tbody>
