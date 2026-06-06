@@ -1,5 +1,8 @@
 <nav class="navbar" [class.navbar--open]="menuOpen()">
-  <a class="brand" routerLink="/" (click)="closeMenu()">{{ i18n.t()['nav.brand'] }}</a>
+  <a class="brand" routerLink="/" (click)="closeMenu()">
+    <span class="brand-mark" aria-hidden="true">W</span>
+    <span>{{ i18n.t()['nav.brand'] }}</span>
+  </a>
 
   <button
     type="button"
@@ -14,18 +17,18 @@
   </button>
 
   <div class="links">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">{{ i18n.t()['nav.home'] }}</a>
-    <a routerLink="/leaderboard" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.leaderboard'] }}</a>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()"><span aria-hidden="true">⌂</span>{{ i18n.t()['nav.home'] }}</a>
+    <a routerLink="/leaderboard" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">#</span>{{ i18n.t()['nav.leaderboard'] }}</a>
 
     @if (isAuthenticated()) {
-      <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.dashboard'] }}</a>
-      <a routerLink="/predictions" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.predictions'] }}</a>
-      <a routerLink="/tournament-questions" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.questions'] }}</a>
-      <a routerLink="/leagues" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.leagues'] }}</a>
+      <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">◫</span>{{ i18n.t()['nav.dashboard'] }}</a>
+      <a routerLink="/predictions" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">✓</span>{{ i18n.t()['nav.predictions'] }}</a>
+      <a routerLink="/tournament-questions" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">?</span>{{ i18n.t()['nav.questions'] }}</a>
+      <a routerLink="/leagues" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">◎</span>{{ i18n.t()['nav.leagues'] }}</a>
       @if (isAdmin()) {
-        <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.admin'] }}</a>
+        <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">⚙</span>{{ i18n.t()['nav.admin'] }}</a>
       }
-      <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">{{ i18n.t()['nav.profile'] }}</a>
+      <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">○</span>{{ i18n.t()['nav.profile'] }}</a>
     }
   </div>
 
@@ -42,7 +45,13 @@
 
   <div class="actions">
     @if (isAuthenticated()) {
-      <span class="username">{{ currentUser()?.username }}</span>
+      <a class="user-card" routerLink="/profile" (click)="closeMenu()">
+        <span class="avatar">{{ currentUser()?.username?.slice(0, 1)?.toUpperCase() }}</span>
+        <span>
+          <strong>{{ currentUser()?.username }}</strong>
+          <small>{{ i18n.t()['nav.profile'] }}</small>
+        </span>
+      </a>
       <button type="button" class="ghost" (click)="logout()">{{ i18n.t()['nav.signOut'] }}</button>
     } @else {
       <a class="ghost" routerLink="/login" (click)="closeMenu()">{{ i18n.t()['nav.signIn'] }}</a>

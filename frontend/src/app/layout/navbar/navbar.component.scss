@@ -1,170 +1,235 @@
+:host {
+  min-width: 0;
+}
+
 .navbar {
+  position: sticky;
+  top: 0;
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 0.85rem 1.5rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100vh;
+  padding: 1.5rem 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(63, 157, 117, 0.22), transparent 32%),
+    var(--nav);
+  color: var(--nav-text);
   font-family: var(--font-sans);
 }
 
 .brand {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.35rem;
+  color: var(--nav-text);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
 }
 
 .menu-toggle {
   display: none;
-  margin-left: auto;
-  width: 40px;
-  height: 36px;
-  padding: 0;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  cursor: pointer;
-
-  .bar {
-    display: block;
-    width: 18px;
-    height: 2px;
-    margin: 4px auto;
-    background: var(--text);
-    border-radius: 1px;
-  }
 }
 
 .links {
-  display: flex;
-  gap: 0.25rem;
-  margin-left: 1rem;
+  display: grid;
+  gap: 0.35rem;
 
   a {
-    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 0.8rem;
+    border-radius: 10px;
+    color: var(--nav-muted);
+    font-size: 0.92rem;
+    font-weight: 600;
     text-decoration: none;
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+
+  a span {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    color: inherit;
+    font-weight: 800;
   }
 
   a:hover {
-    color: var(--text);
-    background: var(--surface-2);
+    color: var(--nav-text);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateX(2px);
   }
 
   a.active {
-    color: var(--accent);
-    background: var(--accent-soft);
+    color: #fff;
+    background: var(--nav-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
   }
 }
 
 .lang-switcher {
   display: flex;
-  gap: 0.2rem;
+  gap: 0.25rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .lang-btn {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  flex: 1;
+  padding: 0.35rem 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
   background: transparent;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 600;
+  color: var(--nav-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
 
   &.active {
-    background: var(--accent-soft);
-    color: var(--accent);
     border-color: var(--accent);
-  }
-
-  &:hover:not(.active) {
-    background: var(--surface-2);
-    color: var(--text);
+    background: var(--accent);
+    color: white;
   }
 }
 
 .actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-left: auto;
+  display: grid;
+  gap: 0.65rem;
 
-  .username {
-    font-weight: 600;
-    color: var(--text);
-    font-size: 0.95rem;
-  }
-
-  .ghost {
-    padding: 0.4rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: transparent;
-    color: var(--text);
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    padding: 0.7rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--nav-text);
     text-decoration: none;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.15s ease;
   }
 
-  .ghost:hover {
-    background: var(--surface-2);
+  .avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #20291f;
+    font-weight: 800;
+  }
+
+  .user-card span:last-child {
+    display: grid;
+    min-width: 0;
+  }
+
+  strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.85rem;
+  }
+
+  small {
+    color: var(--nav-muted);
+    font-size: 0.72rem;
+  }
+
+  .ghost,
+  .cta {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--nav-text);
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
   }
 
   .cta {
-    padding: 0.4rem 0.95rem;
-    border-radius: 8px;
+    border-color: var(--accent);
     background: var(--accent);
-    color: var(--on-accent);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: background 0.15s ease;
-  }
-
-  .cta:hover {
-    background: var(--accent-strong);
   }
 }
 
-@media (max-width: 720px) {
-  .menu-toggle {
-    display: block;
+@media (max-width: 900px) {
+  :host {
+    position: relative;
+    z-index: 20;
   }
 
-  .links,
+  .navbar {
+    position: fixed;
+    inset: auto 0 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 68px;
+    padding: 0.55rem 0.7rem;
+    overflow: visible;
+    background: var(--nav);
+    box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .brand,
+  .lang-switcher,
   .actions {
     display: none;
-    flex-basis: 100%;
-    margin-left: 0;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
   }
 
-  .actions {
-    border-top: 1px solid var(--border);
-    padding-top: 0.75rem;
-  }
-
-  .navbar--open .links,
-  .navbar--open .actions {
+  .links {
     display: flex;
-  }
+    flex: 1;
+    justify-content: space-around;
+    gap: 0.1rem;
 
-  .actions .username {
-    padding: 0.4rem 0.75rem;
-  }
+    a {
+      display: none;
+      min-width: 54px;
+      padding: 0.45rem 0.35rem;
+      flex-direction: column;
+      gap: 0.15rem;
+      font-size: 0.62rem;
+      text-align: center;
+    }
 
-  .actions .ghost,
-  .actions .cta {
-    text-align: center;
+    a[href="/dashboard"],
+    a[href="/predictions"],
+    a[href="/leaderboard"],
+    a[href="/"],
+    a[href="/leagues"] {
+      display: flex;
+    }
+
+    a:hover {
+      transform: none;
+    }
+
+    a.active {
+      box-shadow: inset 0 -3px 0 var(--accent);
+    }
   }
 }
