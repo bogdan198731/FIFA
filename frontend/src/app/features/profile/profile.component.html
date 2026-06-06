@@ -1,14 +1,14 @@
 <section class="page">
-  <h1>Profile</h1>
+  <h1>{{ i18n.t()['profile.title'] }}</h1>
 
   @if (currentUser(); as user) {
     <dl class="details">
-      <dt>Username</dt><dd>{{ user.username }}</dd>
-      <dt>Email</dt><dd>{{ user.email }}</dd>
-      <dt>Role</dt><dd><span class="badge" [class.badge--admin]="user.role === 'ADMIN'">{{ user.role }}</span></dd>
-      <dt>User ID</dt><dd>{{ user.id }}</dd>
+      <dt>{{ i18n.t()['profile.username'] }}</dt><dd>{{ user.username }}</dd>
+      <dt>{{ i18n.t()['profile.email'] }}</dt><dd>{{ user.email }}</dd>
+      <dt>{{ i18n.t()['profile.role'] }}</dt><dd><span class="badge" [class.badge--admin]="user.role === 'ADMIN'">{{ user.role }}</span></dd>
+      <dt>{{ i18n.t()['profile.userId'] }}</dt><dd>{{ user.id }}</dd>
     </dl>
 
-    <button type="button" class="danger" (click)="logout()">Sign out</button>
+    <button type="button" class="danger" (click)="logout()">{{ i18n.t()['profile.signOut'] }}</button>
   }
 </section>

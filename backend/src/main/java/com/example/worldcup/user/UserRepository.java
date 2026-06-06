@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByTotalPointsGreaterThan(long totalPoints);
 
     long countByRole(Role role);
+
+    List<User> findAllByIdInOrderByTotalPointsDescUsernameAsc(java.util.Collection<Long> ids);
 }

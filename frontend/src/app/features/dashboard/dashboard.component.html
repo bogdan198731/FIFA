@@ -1,12 +1,12 @@
 <section class="page">
   <header class="header">
     <h1>Welcome, {{ currentUser()?.username }}</h1>
-    <p class="muted">Your current pool snapshot and the next things to do.</p>
+    <p class="muted">{{ i18n.t()['dashboard.subtitle'] }}</p>
   </header>
 
   @switch (state()) {
     @case ('loading') {
-      <p class="muted">Loading dashboard...</p>
+      <p class="muted">{{ i18n.t()['dashboard.loading'] }}</p>
     }
     @case ('error') {
       <p class="error" role="alert">{{ errorMessage() }}</p>
@@ -15,52 +15,52 @@
       @if (dashboard(); as d) {
         <section class="cards">
           <article class="card stat">
-            <span>Current rank</span>
+            <span>{{ i18n.t()['dashboard.rank'] }}</span>
             <strong>{{ d.currentRank ? ('#' + d.currentRank) : '-' }}</strong>
           </article>
           <article class="card stat">
-            <span>Total points</span>
+            <span>{{ i18n.t()['dashboard.points'] }}</span>
             <strong>{{ d.totalPoints }}</strong>
           </article>
           <article class="card stat">
-            <span>Unanswered questions</span>
+            <span>{{ i18n.t()['dashboard.questions'] }}</span>
             <strong>{{ d.unansweredTournamentQuestionsCount }}</strong>
-            <a routerLink="/tournament-questions">Open questions</a>
+            <a routerLink="/tournament-questions">{{ i18n.t()['dashboard.questionsLink'] }}</a>
           </article>
         </section>
 
         <section class="section stats-section">
           <div class="section-header">
-            <h2>Prediction statistics</h2>
-            <a routerLink="/predictions">Review picks</a>
+            <h2>{{ i18n.t()['dashboard.stats.title'] }}</h2>
+            <a routerLink="/predictions">{{ i18n.t()['dashboard.stats.link'] }}</a>
           </div>
           <div class="stats-grid">
             <div>
               <strong>{{ d.predictionStatistics.totalPredictions }}</strong>
-              <span>total picks</span>
+              <span>{{ i18n.t()['dashboard.stats.total'] }}</span>
             </div>
             <div>
               <strong>{{ d.predictionStatistics.scoredPredictions }}</strong>
-              <span>scored</span>
+              <span>{{ i18n.t()['dashboard.stats.scored'] }}</span>
             </div>
             <div>
               <strong>{{ d.predictionStatistics.averagePointsPerScoredPrediction | number:'1.1-1' }}</strong>
-              <span>avg points</span>
+              <span>{{ i18n.t()['dashboard.stats.avg'] }}</span>
             </div>
             <div>
               <strong>{{ d.predictionStatistics.bestPredictionPoints }}</strong>
-              <span>best pick</span>
+              <span>{{ i18n.t()['dashboard.stats.best'] }}</span>
             </div>
           </div>
         </section>
 
         <section class="section">
           <div class="section-header">
-            <h2>Upcoming matches</h2>
-            <a routerLink="/predictions">Make predictions</a>
+            <h2>{{ i18n.t()['dashboard.upcoming.title'] }}</h2>
+            <a routerLink="/predictions">{{ i18n.t()['dashboard.upcoming.link'] }}</a>
           </div>
           @if (d.upcomingMatches.length === 0) {
-            <p class="muted">No upcoming matches are available.</p>
+            <p class="muted">{{ i18n.t()['dashboard.upcoming.empty'] }}</p>
           } @else {
             <div class="list">
               @for (match of d.upcomingMatches; track match.id) {
@@ -72,7 +72,7 @@
                     </strong>
                     <span>{{ match.stage.replaceAll('_', ' ') }} - {{ match.kickoffAt | date:'MMM d, y, HH:mm' }}</span>
                   </div>
-                  <span class="pill">{{ match.locked ? 'Locked' : 'Open' }}</span>
+                  <span class="pill">{{ match.locked ? i18n.t()['dashboard.locked'] : i18n.t()['dashboard.open'] }}</span>
                 </article>
               }
             </div>
@@ -81,11 +81,11 @@
 
         <section class="section">
           <div class="section-header">
-            <h2>Recent prediction results</h2>
-            <a routerLink="/leaderboard">Leaderboard</a>
+            <h2>{{ i18n.t()['dashboard.recent.title'] }}</h2>
+            <a routerLink="/leaderboard">{{ i18n.t()['dashboard.recent.link'] }}</a>
           </div>
           @if (d.recentPredictionResults.length === 0) {
-            <p class="muted">No scored predictions yet.</p>
+            <p class="muted">{{ i18n.t()['dashboard.recent.empty'] }}</p>
           } @else {
             <div class="list">
               @for (result of d.recentPredictionResults; track result.predictionId) {
@@ -96,10 +96,10 @@
                       {{ teamFlag(result.awayTeam) }} {{ result.awayTeam }}
                     </strong>
                     <span>
-                      Predicted {{ result.predictedHomeScore }}-{{ result.predictedAwayScore }},
-                      actual {{ result.actualHomeScore }}-{{ result.actualAwayScore }}
+                      {{ i18n.t()['dashboard.predicted'] }} {{ result.predictedHomeScore }}-{{ result.predictedAwayScore }},
+                      {{ i18n.t()['dashboard.actual'] }} {{ result.actualHomeScore }}-{{ result.actualAwayScore }}
                       @if (result.actualQualifiedTeam) {
-                        ({{ result.actualQualifiedTeam }} qualified)
+                        ({{ result.actualQualifiedTeam }} {{ i18n.t()['dashboard.qualified'] }})
                       }
                     </span>
                   </div>

@@ -5,6 +5,8 @@ import com.example.worldcup.common.StringListConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,6 +38,10 @@ public class TournamentQuestion {
     @Convert(converter = StringListConverter.class)
     @Column(name = "options")
     private List<String> options;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "option_source", nullable = false, length = 20)
+    private OptionSource optionSource = OptionSource.STATIC;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -92,6 +98,14 @@ public class TournamentQuestion {
 
     public void setOptions(List<String> options) {
         this.options = options;
+    }
+
+    public OptionSource getOptionSource() {
+        return optionSource;
+    }
+
+    public void setOptionSource(OptionSource optionSource) {
+        this.optionSource = optionSource;
     }
 
     public Instant getCreatedAt() {

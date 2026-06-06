@@ -1,6 +1,7 @@
 package com.example.worldcup.match;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
@@ -19,4 +20,10 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
     List<Match> findByFinishedFalseAndKickoffAtAfterOrderByKickoffAtAsc(Instant after);
 
     Optional<Match> findByApiFixtureId(Long apiFixtureId);
+
+    @Query("SELECT DISTINCT m.homeTeam FROM Match m ORDER BY m.homeTeam")
+    List<String> findAllDistinctHomeTeams();
+
+    @Query("SELECT DISTINCT m.awayTeam FROM Match m ORDER BY m.awayTeam")
+    List<String> findAllDistinctAwayTeams();
 }

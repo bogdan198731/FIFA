@@ -1,10 +1,10 @@
 <section class="auth-card">
-  <h1>Sign in</h1>
-  <p class="muted">Welcome back. Sign in to make your predictions.</p>
+  <h1>{{ i18n.t()['auth.login.title'] }}</h1>
+  <p class="muted">{{ i18n.t()['auth.login.subtitle'] }}</p>
 
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <label>
-      <span>Username</span>
+      <span>{{ i18n.t()['auth.login.username'] }}</span>
       <input
         type="text"
         autocomplete="username"
@@ -14,7 +14,7 @@
     </label>
 
     <label>
-      <span>Password</span>
+      <span>{{ i18n.t()['auth.login.password'] }}</span>
       <input
         type="password"
         autocomplete="current-password"
@@ -28,11 +28,11 @@
     }
 
     <button type="submit" [disabled]="submitting()">
-      {{ submitting() ? 'Signing in…' : 'Sign in' }}
+      {{ submitting() ? i18n.t()['auth.login.submitting'] : i18n.t()['auth.login.submit'] }}
     </button>
   </form>
 
   <p class="muted switch">
-    No account? <a routerLink="/register">Create one</a>
+    {{ i18n.t()['auth.login.noAccount'] }} <a routerLink="/register">{{ i18n.t()['auth.login.createOne'] }}</a>
   </p>
 </section>

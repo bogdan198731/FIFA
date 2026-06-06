@@ -1,15 +1,12 @@
 <section class="page">
   <header class="header">
-    <h1>Match predictions</h1>
-    <p class="muted">
-      Pick the score before kickoff. Knockout matches also need the team that
-      qualifies.
-    </p>
+    <h1>{{ i18n.t()['predictions.title'] }}</h1>
+    <p class="muted">{{ i18n.t()['predictions.subtitle'] }}</p>
   </header>
 
   @switch (state()) {
     @case ('loading') {
-      <app-loading-spinner label="Loading matches" />
+      <app-loading-spinner [label]="i18n.t()['predictions.loading']" />
     }
     @case ('error') {
       <p class="error" role="alert">{{ errorMessage() }} Your saved predictions are safe.</p>
@@ -17,13 +14,13 @@
     @case ('ready') {
       @if (matches().length === 0) {
         <app-empty-state
-          title="No matches yet"
-          message="Once fixtures are published, this page will show every match you can predict."
+          [title]="i18n.t()['predictions.empty.title']"
+          [message]="i18n.t()['predictions.empty.message']"
         />
       } @else {
         <p class="muted summary">
-          {{ openCount() }} of {{ matches().length }} still open.
-          {{ savedCount() }} saved.
+          {{ openCount() }} {{ i18n.t()['predictions.of'] }} {{ matches().length }} {{ i18n.t()['predictions.stillOpen'] }}.
+          {{ savedCount() }} {{ i18n.t()['predictions.saved'] }}.
         </p>
         <div class="groups">
           @for (section of sections(); track section.key) {
@@ -32,9 +29,9 @@
                 <span class="group__title">{{ section.title }}</span>
                 <span class="group__meta">
                   {{ section.matches.length }}
-                  {{ section.matches.length === 1 ? 'match' : 'matches' }}
+                  {{ section.matches.length === 1 ? i18n.t()['predictions.match'] : i18n.t()['predictions.matches'] }}
                   @if (openInSection(section) > 0) {
-                    · {{ openInSection(section) }} open
+                    · {{ openInSection(section) }} {{ i18n.t()['predictions.open'] }}
                   }
                 </span>
               </summary>

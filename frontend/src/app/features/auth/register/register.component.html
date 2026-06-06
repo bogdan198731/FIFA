@@ -1,10 +1,10 @@
 <section class="auth-card">
-  <h1>Create account</h1>
-  <p class="muted">Join the pool and start predicting matches.</p>
+  <h1>{{ i18n.t()['auth.register.title'] }}</h1>
+  <p class="muted">{{ i18n.t()['auth.register.subtitle'] }}</p>
 
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <label>
-      <span>Username</span>
+      <span>{{ i18n.t()['auth.register.username'] }}</span>
       <input
         type="text"
         autocomplete="username"
@@ -12,12 +12,12 @@
         [attr.aria-invalid]="form.controls.username.invalid && form.controls.username.touched"
       />
       @if (form.controls.username.touched && form.controls.username.errors?.['minlength']) {
-        <small class="error">At least 3 characters.</small>
+        <small class="error">{{ i18n.t()['auth.register.error.username'] }}</small>
       }
     </label>
 
     <label>
-      <span>Email</span>
+      <span>{{ i18n.t()['auth.register.email'] }}</span>
       <input
         type="email"
         autocomplete="email"
@@ -25,12 +25,12 @@
         [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
       />
       @if (form.controls.email.touched && form.controls.email.errors?.['email']) {
-        <small class="error">Enter a valid email.</small>
+        <small class="error">{{ i18n.t()['auth.register.error.email'] }}</small>
       }
     </label>
 
     <label>
-      <span>Password</span>
+      <span>{{ i18n.t()['auth.register.password'] }}</span>
       <input
         type="password"
         autocomplete="new-password"
@@ -38,7 +38,7 @@
         [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
       />
       @if (form.controls.password.touched && form.controls.password.errors?.['minlength']) {
-        <small class="error">At least 8 characters.</small>
+        <small class="error">{{ i18n.t()['auth.register.error.password'] }}</small>
       }
     </label>
 
@@ -47,11 +47,11 @@
     }
 
     <button type="submit" [disabled]="submitting()">
-      {{ submitting() ? 'Creating account…' : 'Create account' }}
+      {{ submitting() ? i18n.t()['auth.register.submitting'] : i18n.t()['auth.register.submit'] }}
     </button>
   </form>
 
   <p class="muted switch">
-    Already have an account? <a routerLink="/login">Sign in</a>
+    {{ i18n.t()['auth.register.hasAccount'] }} <a routerLink="/login">{{ i18n.t()['auth.register.signIn'] }}</a>
   </p>
 </section>

@@ -1,21 +1,22 @@
 <section class="page">
   <header class="header">
-    <h1>{{ i18n.t()['leaderboard.title'] }}</h1>
-    <p class="muted">{{ i18n.t()['leaderboard.subtitle'] }}</p>
+    <a routerLink="/leagues" class="back-link">{{ i18n.t()['league.back'] }}</a>
+    <h1>{{ i18n.t()['league.title'] }}</h1>
+    <p class="muted">{{ i18n.t()['league.subtitle'] }}</p>
   </header>
 
   @switch (state()) {
     @case ('loading') {
-      <app-loading-spinner [label]="i18n.t()['leaderboard.loading']" />
+      <app-loading-spinner label="Loading standings" />
     }
     @case ('error') {
-      <p class="error" role="alert">{{ errorMessage() }} Try refreshing in a moment.</p>
+      <p class="error" role="alert">{{ errorMessage() }}</p>
     }
     @case ('ready') {
       @if (entries().length === 0) {
         <app-empty-state
-          [title]="i18n.t()['leaderboard.empty.title']"
-          [message]="i18n.t()['leaderboard.empty.message']"
+          [title]="i18n.t()['league.empty.title']"
+          [message]="i18n.t()['league.empty.message']"
         />
       } @else {
         <div class="table-wrap">

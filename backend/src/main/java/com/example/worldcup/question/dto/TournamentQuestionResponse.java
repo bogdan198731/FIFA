@@ -1,5 +1,6 @@
 package com.example.worldcup.question.dto;
 
+import com.example.worldcup.question.OptionSource;
 import com.example.worldcup.question.TournamentQuestion;
 
 import java.time.Instant;
@@ -12,10 +13,11 @@ public record TournamentQuestionResponse(
         Integer points,
         boolean locked,
         String correctAnswer,
-        List<String> options
+        List<String> options,
+        OptionSource optionSource
 ) {
 
-    public static TournamentQuestionResponse from(TournamentQuestion q, Instant now) {
+    public static TournamentQuestionResponse from(TournamentQuestion q, Instant now, List<String> resolvedOptions) {
         boolean locked = !now.isBefore(q.getDeadline());
         String correct = locked ? q.getCorrectAnswer() : null;
         return new TournamentQuestionResponse(
@@ -25,7 +27,8 @@ public record TournamentQuestionResponse(
                 q.getPoints(),
                 locked,
                 correct,
-                q.getOptions()
+                resolvedOptions,
+                q.getOptionSource()
         );
     }
 }

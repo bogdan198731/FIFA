@@ -1,15 +1,12 @@
 <section class="page">
   <header class="header">
-    <h1>Tournament questions</h1>
-    <p class="muted">
-      Lock in your picks before each deadline. Answers can be edited up until
-      the question closes.
-    </p>
+    <h1>{{ i18n.t()['questions.title'] }}</h1>
+    <p class="muted">{{ i18n.t()['questions.subtitle'] }}</p>
   </header>
 
   @switch (state()) {
     @case ('loading') {
-      <app-loading-spinner label="Loading questions" />
+      <app-loading-spinner [label]="i18n.t()['questions.loading']" />
     }
     @case ('error') {
       <p class="error" role="alert">{{ errorMessage() }} Please try again shortly.</p>
@@ -17,12 +14,12 @@
     @case ('ready') {
       @if (questions().length === 0) {
         <app-empty-state
-          title="No questions yet"
-          message="Tournament questions will appear here when the admin publishes them."
+          [title]="i18n.t()['questions.empty.title']"
+          [message]="i18n.t()['questions.empty.message']"
         />
       } @else {
         <p class="muted summary">
-          {{ openCount() }} of {{ questions().length }} still open.
+          {{ openCount() }} {{ i18n.t()['questions.of'] }} {{ questions().length }} {{ i18n.t()['questions.stillOpen'] }}.
         </p>
         <div class="list">
           @for (question of questions(); track question.id) {

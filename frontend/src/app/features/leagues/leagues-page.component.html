@@ -1,0 +1,91 @@
+<section class="page">
+  <header class="header">
+    <h1>{{ i18n.t()['leagues.title'] }}</h1>
+    <p class="muted">{{ i18n.t()['leagues.subtitle'] }}</p>
+  </header>
+
+  <div class="actions-row">
+    <button class="cta" (click)="openCreate()" [disabled]="submitting()">{{ i18n.t()['leagues.create'] }}</button>
+    <button class="ghost" (click)="openJoin()" [disabled]="submitting()">{{ i18n.t()['leagues.join'] }}</button>
+  </div>
+
+  @if (showCreateForm()) {
+    <div class="form-card">
+      <h3>{{ i18n.t()['leagues.createForm.title'] }}</h3>
+      <input
+        type="text"
+        [placeholder]="i18n.t()['leagues.createForm.placeholder']"
+        [value]="newLeagueName()"
+        (input)="newLeagueName.set($any($event.target).value)"
+        maxlength="100"
+        class="text-input"
+      />
+      @if (formError()) {
+        <p class="error" role="alert">{{ formError() }}</p>
+      }
+      <div class="form-actions">
+        <button class="cta" (click)="submitCreate()" [disabled]="submitting()">
+          {{ submitting() ? i18n.t()['leagues.createForm.submitting'] : i18n.t()['leagues.createForm.submit'] }}
+        </button>
+        <button class="ghost" (click)="cancelForms()" [disabled]="submitting()">{{ i18n.t()['leagues.cancel'] }}</button>
+      </div>
+    </div>
+  }
+
+  @if (showJoinForm()) {
+    <div class="form-card">
+      <h3>{{ i18n.t()['leagues.joinForm.title'] }}</h3>
+      <input
+        type="text"
+        [placeholder]="i18n.t()['leagues.joinForm.placeholder']"
+        [value]="joinCode()"
+        (input)="joinCode.set($any($event.target).value)"
+        maxlength="8"
+        class="text-input"
+        style="text-transform: uppercase"
+      />
+      @if (formError()) {
+        <p class="error" role="alert">{{ formError() }}</p>
+      }
+      <div class="form-actions">
+        <button class="cta" (click)="submitJoin()" [disabled]="submitting()">
+          {{ submitting() ? i18n.t()['leagues.joinForm.submitting'] : i18n.t()['leagues.joinForm.submit'] }}
+        </button>
+        <button class="ghost" (click)="cancelForms()" [disabled]="submitting()">{{ i18n.t()['leagues.cancel'] }}</button>
+      </div>
+    </div>
+  }
+
+  @switch (state()) {
+    @case ('loading') {
+      <app-loading-spinner label="Loading leagues" />
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ errorMessage() }} Try refreshing in a moment.</p>
+    }
+    @case ('ready') {
+      @if (leagues().length === 0) {
+        <app-empty-state
+          [title]="i18n.t()['leagues.empty.title']"
+          [message]="i18n.t()['leagues.empty.message']"
+        />
+      } @else {
+        <div class="league-list">
+          @for (league of leagues(); track league.id) {
+            <div class="league-card">
+              <div class="league-info">
+                <a [routerLink]="['/leagues', league.id]" class="league-name">{{ league.name }}</a>
+                <span class="muted">{{ league.memberCount }} {{ league.memberCount === 1 ? i18n.t()['leagues.member'] : i18n.t()['leagues.members'] }}</span>
+              </div>
+              <div class="league-code">
+                <span class="code-label">{{ i18n.t()['leagues.inviteCode'] }}</span>
+                <span class="code-value">{{ league.inviteCode }}</span>
+                <button class="ghost small" (click)="copyCode(league.inviteCode)" title="Copy invite code">{{ i18n.t()['leagues.copy'] }}</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+</section>

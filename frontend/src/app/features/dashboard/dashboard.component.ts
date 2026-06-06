@@ -3,6 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { I18nService } from '../../core/services/i18n.service';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { DashboardSummary } from '../../core/models/dashboard.model';
 import { teamFlag } from '../../shared/team-flags';
@@ -19,6 +20,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 export class DashboardComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly dashboardService = inject(DashboardService);
+  readonly i18n = inject(I18nService);
 
   readonly currentUser = this.auth.currentUser;
   readonly dashboard = signal<DashboardSummary | null>(null);

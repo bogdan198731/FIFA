@@ -37,6 +37,11 @@ export class AdminHomePageComponent {
       description: 'Rebuild awarded points and leaderboard totals.'
     },
     {
+      path: '/admin/questions',
+      title: 'Questions',
+      description: 'Set option source for each tournament question (static list, all teams, or all players).'
+    },
+    {
       path: '/admin/config',
       title: 'Configurations',
       description: 'View effective server configuration and integration status.'

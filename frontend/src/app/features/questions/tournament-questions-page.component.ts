@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { forkJoin } from 'rxjs';
 
 import { QuestionFormComponent } from './question-form.component';
+import { I18nService } from '../../core/services/i18n.service';
 import { QuestionService } from '../../core/services/question.service';
 import {
   TournamentAnswer,
@@ -22,6 +23,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 })
 export class TournamentQuestionsPageComponent implements OnInit {
   private readonly questionService = inject(QuestionService);
+  readonly i18n = inject(I18nService);
 
   readonly questions = signal<TournamentQuestion[]>([]);
   readonly answersByQuestionId = signal<Map<number, TournamentAnswer>>(new Map());

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +13,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class HomeComponent {
   private readonly auth = inject(AuthService);
+  readonly i18n = inject(I18nService);
 
   readonly isAuthenticated = this.auth.isAuthenticated;
   readonly currentUser = this.auth.currentUser;
