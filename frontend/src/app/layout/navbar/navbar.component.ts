@@ -42,5 +42,6 @@ export class NavbarComponent {
 
   setLang(lang: Lang): void {
     this.i18n.setLang(lang);
+    this.closeMenu();
   }
 }

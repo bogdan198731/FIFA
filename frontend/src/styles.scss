@@ -89,3 +89,118 @@ select {
   outline: 3px solid color-mix(in srgb, var(--accent) 32%, transparent);
   outline-offset: 2px;
 }
+
+.navbar .menu-toggle,
+.navbar .mobile-menu {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .navbar .menu-toggle {
+    display: flex;
+    align-items: center;
+    min-width: 54px;
+    padding: 0.45rem 0.35rem;
+    border: 0;
+    border-radius: 10px;
+    flex-direction: column;
+    gap: 0.15rem;
+    background: transparent;
+    color: var(--nav-muted);
+    font-size: 0.62rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .navbar .menu-toggle span {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+  }
+
+  .navbar .menu-toggle small {
+    font: inherit;
+  }
+
+  .navbar--open .menu-toggle {
+    color: #fff;
+    background: var(--nav-soft);
+    box-shadow: inset 0 -3px 0 var(--accent);
+  }
+
+  .navbar .mobile-menu {
+    position: fixed;
+    right: 0.7rem;
+    bottom: 78px;
+    display: none;
+    width: min(320px, calc(100vw - 1.4rem));
+    max-height: calc(100vh - 100px);
+    padding: 0.8rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    background: var(--nav);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+  }
+
+  .navbar--open .mobile-menu {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .mobile-menu__links,
+  .mobile-menu__actions {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .mobile-menu__links a,
+  .mobile-menu__actions .ghost,
+  .mobile-menu__actions .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--nav-text);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .mobile-menu__links a {
+    justify-content: flex-start;
+  }
+
+  .mobile-menu__links a span {
+    width: 20px;
+    color: var(--nav-muted);
+    text-align: center;
+  }
+
+  .mobile-menu__links a.active {
+    border-color: var(--accent);
+    background: var(--nav-soft);
+  }
+
+  .mobile-menu__langs {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.75rem 0;
+    border-block: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .mobile-menu__actions .cta {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+}

@@ -15,6 +15,7 @@ type LoadState = 'loading' | 'ready' | 'error';
   standalone: true,
   imports: [RouterLink, LoadingSpinnerComponent, EmptyStateComponent],
   templateUrl: './league-detail-page.component.html',
+  styleUrl: './league-detail-page.component.scss',
 })
 export class LeagueDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

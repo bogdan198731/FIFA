@@ -8,12 +8,11 @@
     type="button"
     class="menu-toggle"
     [attr.aria-expanded]="menuOpen()"
-    aria-label="Toggle navigation"
+    [attr.aria-label]="i18n.t()['nav.more']"
     (click)="toggleMenu()"
   >
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
+    <span aria-hidden="true">•••</span>
+    <small>{{ i18n.t()['nav.more'] }}</small>
   </button>
 
   <div class="links">
@@ -57,5 +56,37 @@
       <a class="ghost" routerLink="/login" (click)="closeMenu()">{{ i18n.t()['nav.signIn'] }}</a>
       <a class="cta" routerLink="/register" (click)="closeMenu()">{{ i18n.t()['nav.register'] }}</a>
     }
+  </div>
+
+  <div class="mobile-menu">
+    <div class="mobile-menu__links">
+      @if (isAuthenticated()) {
+        <a routerLink="/tournament-questions" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">?</span>{{ i18n.t()['nav.questions'] }}</a>
+        @if (isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">⚙</span>{{ i18n.t()['nav.admin'] }}</a>
+        }
+        <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">○</span>{{ i18n.t()['nav.profile'] }}</a>
+      }
+    </div>
+
+    <div class="mobile-menu__langs" aria-label="Language">
+      @for (l of langs; track l.code) {
+        <button
+          type="button"
+          class="lang-btn"
+          [class.active]="i18n.lang() === l.code"
+          (click)="setLang(l.code)"
+        >{{ l.label }}</button>
+      }
+    </div>
+
+    <div class="mobile-menu__actions">
+      @if (isAuthenticated()) {
+        <button type="button" class="ghost" (click)="logout()">{{ i18n.t()['nav.signOut'] }}</button>
+      } @else {
+        <a class="ghost" routerLink="/login" (click)="closeMenu()">{{ i18n.t()['nav.signIn'] }}</a>
+        <a class="cta" routerLink="/register" (click)="closeMenu()">{{ i18n.t()['nav.register'] }}</a>
+      }
+    </div>
   </div>
 </nav>
