@@ -9,6 +9,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './core/services/theme.service';
 import { handleChunkNavigationError } from './core/chunk-reload';
 
 export const appConfig: ApplicationConfig = {
@@ -20,6 +21,12 @@ export const appConfig: ApplicationConfig = {
       withNavigationErrorHandler(handleChunkNavigationError)
     ),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [ThemeService],
+      useFactory: (theme: ThemeService) => () => theme.initialize()
+    },
     {
       provide: APP_INITIALIZER,
       multi: true,

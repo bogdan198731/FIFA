@@ -199,6 +199,23 @@ select {
     border-block: 1px solid rgba(255, 255, 255, 0.09);
   }
 
+  .mobile-menu__theme {
+    display: grid;
+    gap: 0.35rem;
+    color: var(--nav-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .mobile-menu__theme select {
+    width: 100%;
+    padding: 0.65rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9px;
+    background: var(--nav-soft);
+    color: var(--nav-text);
+  }
+
   .mobile-menu__actions .cta {
     border-color: var(--accent);
     background: var(--accent);

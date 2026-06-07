@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { I18nService } from '../../core/services/i18n.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { Lang } from '../../core/i18n/translations';
 
 @Component({
@@ -15,6 +16,7 @@ import { Lang } from '../../core/i18n/translations';
 export class NavbarComponent {
   private readonly auth = inject(AuthService);
   readonly i18n = inject(I18nService);
+  readonly theme = inject(ThemeService);
 
   readonly currentUser = this.auth.currentUser;
   readonly isAuthenticated = this.auth.isAuthenticated;
@@ -42,6 +44,11 @@ export class NavbarComponent {
 
   setLang(lang: Lang): void {
     this.i18n.setLang(lang);
+    this.closeMenu();
+  }
+
+  setTheme(id: string): void {
+    this.theme.setTheme(id);
     this.closeMenu();
   }
 }

@@ -80,6 +80,16 @@
       }
     </div>
 
+    <label class="mobile-menu__theme">
+      <span>{{ i18n.t()['theme.choose'] }}</span>
+      <select [value]="theme.selectedId()" (change)="setTheme($any($event.target).value)">
+        <option value="default">{{ i18n.t()['theme.default'] }}</option>
+        @for (option of theme.themes; track option.id) {
+          <option [value]="option.id">{{ option.flag }} {{ option.team }}</option>
+        }
+      </select>
+    </label>
+
     <div class="mobile-menu__actions">
       @if (isAuthenticated()) {
         <button type="button" class="ghost" (click)="logout()">{{ i18n.t()['nav.signOut'] }}</button>
