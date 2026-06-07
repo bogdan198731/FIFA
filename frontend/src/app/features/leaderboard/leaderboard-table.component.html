@@ -18,6 +18,16 @@
           [message]="i18n.t()['leaderboard.empty.message']"
         />
       } @else {
+        <section class="podium" aria-label="Top players">
+          @for (entry of entries().slice(0, 3); track entry.userId) {
+            <article class="podium-card" [class.podium-card--winner]="entry.rank === 1">
+              <span class="podium-rank">#{{ entry.rank }}</span>
+              <span class="avatar">{{ entry.username.slice(0, 1).toUpperCase() }}</span>
+              <strong>{{ entry.username }}</strong>
+              <span>{{ entry.totalPoints }} {{ i18n.t()['leaderboard.points'] }}</span>
+            </article>
+          }
+        </section>
         <div class="table-wrap">
           <table class="leaderboard">
             <thead>
@@ -32,6 +42,7 @@
                 <tr [class.is-self]="entry.userId === currentUserId()">
                   <td class="rank">{{ entry.rank }}</td>
                   <td>
+                    <span class="row-avatar">{{ entry.username.slice(0, 1).toUpperCase() }}</span>
                     <span class="name">{{ entry.username }}</span>
                     @if (entry.userId === currentUserId()) {
                       <span class="you">you</span>

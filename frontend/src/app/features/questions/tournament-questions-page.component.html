@@ -18,9 +18,16 @@
           [message]="i18n.t()['questions.empty.message']"
         />
       } @else {
-        <p class="muted summary">
-          {{ openCount() }} {{ i18n.t()['questions.of'] }} {{ questions().length }} {{ i18n.t()['questions.stillOpen'] }}.
-        </p>
+        <section class="question-summary">
+          <div>
+            <strong>{{ openCount() }}</strong>
+            <span>{{ i18n.t()['questions.stillOpen'] }}</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span [style.width.%]="questions().length ? (questions().length - openCount()) / questions().length * 100 : 0"></span>
+          </div>
+          <small>{{ questions().length - openCount() }} {{ i18n.t()['questions.of'] }} {{ questions().length }} {{ i18n.t()['questions.locked'] }}</small>
+        </section>
         <div class="list">
           @for (question of questions(); track question.id) {
             <app-question-form

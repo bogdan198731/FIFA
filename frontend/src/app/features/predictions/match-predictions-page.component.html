@@ -18,13 +18,18 @@
           [message]="i18n.t()['predictions.empty.message']"
         />
       } @else {
-        <p class="muted summary">
-          {{ openCount() }} {{ i18n.t()['predictions.of'] }} {{ matches().length }} {{ i18n.t()['predictions.stillOpen'] }}.
-          {{ savedCount() }} {{ i18n.t()['predictions.saved'] }}.
-        </p>
+        <section class="progress-card">
+          <div>
+            <strong>{{ savedCount() }} {{ i18n.t()['predictions.of'] }} {{ matches().length }} {{ i18n.t()['predictions.saved'] }}</strong>
+            <span>{{ openCount() }} {{ i18n.t()['predictions.stillOpen'] }}</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span [style.width.%]="matches().length ? savedCount() / matches().length * 100 : 0"></span>
+          </div>
+        </section>
         <div class="groups">
           @for (section of sections(); track section.key) {
-            <details class="group">
+            <details class="group" [open]="openInSection(section) > 0">
               <summary class="group__summary">
                 <span class="group__title">{{ section.title }}</span>
                 <span class="group__meta">

@@ -1,27 +1,102 @@
 .page {
-  max-width: 720px;
+  max-width: 940px;
   margin: 0 auto;
+}
 
-  .header {
-    margin-bottom: 1.5rem;
+.header {
+  margin-bottom: 1.5rem;
 
-    h1 {
-      margin: 0 0 0.25rem;
-      font-size: 1.6rem;
-      color: var(--text);
-    }
-
-    .muted {
-      margin: 0;
-      color: var(--text-muted);
-    }
+  h1 {
+    margin: 0 0 0.35rem;
+    color: var(--text);
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: -0.05em;
   }
+}
+
+.muted {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 1rem;
+  margin: 2rem 0 1rem;
+}
+
+.podium-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  min-height: 120px;
+  padding: 1.3rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+
+  &--winner {
+    min-height: 150px;
+    border-color: color-mix(in srgb, var(--gold) 55%, var(--border));
+    background:
+      radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--gold) 22%, transparent), transparent 55%),
+      var(--surface);
+  }
+
+  strong {
+    overflow: hidden;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span:last-child {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+}
+
+.podium-rank {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.8rem;
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.avatar,
+.row-avatar {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 850;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  font-size: 1.1rem;
+}
+
+.row-avatar {
+  width: 28px;
+  height: 28px;
+  margin-right: 0.55rem;
+  font-size: 0.75rem;
 }
 
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--surface);
   box-shadow: var(--shadow-soft);
 }
@@ -29,7 +104,7 @@
 .leaderboard {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 
   thead {
     background: var(--surface-2);
@@ -37,17 +112,25 @@
 
   th,
   td {
-    padding: 0.7rem 1rem;
-    text-align: left;
+    padding: 0.8rem 1rem;
     border-bottom: 1px solid var(--border);
+    text-align: left;
   }
 
   th {
-    font-weight: 600;
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease;
+  }
+
+  tbody tr:hover {
+    background: var(--surface-2);
   }
 
   tbody tr:last-child td {
@@ -58,68 +141,67 @@
     width: 56px;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
+    font-weight: 800;
   }
 
   .points {
     text-align: right;
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    font-weight: 800;
   }
 
   .name {
     color: var(--text);
+    font-weight: 650;
   }
 
   .you {
     margin-left: 0.5rem;
-    padding: 0.05rem 0.45rem;
-    background: var(--accent-soft);
-    color: var(--accent);
+    padding: 0.1rem 0.45rem;
     border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 600;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
 
   tr.is-self {
     background: var(--accent-soft);
-    box-shadow: inset 3px 0 0 var(--accent);
+    box-shadow: inset 4px 0 0 var(--accent);
   }
-
-  tr.is-self .rank,
-  tr.is-self .name,
-  tr.is-self .points {
-    color: var(--accent-strong);
-  }
-}
-
-.muted {
-  color: var(--text-muted);
 }
 
 .error {
   color: var(--danger);
-  padding: 0.9rem 1rem;
-  border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--border));
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--danger) 8%, transparent);
 }
 
-@media (max-width: 560px) {
-  .leaderboard {
-    th,
-    td {
-      padding: 0.65rem 0.75rem;
-    }
+@media (max-width: 620px) {
+  .podium {
+    gap: 0.45rem;
+  }
 
-    .rank {
-      width: 40px;
-    }
+  .podium-card {
+    min-height: 105px;
+    padding: 1.1rem 0.45rem;
 
-    .you {
-      display: inline-flex;
-      margin: 0.25rem 0 0;
+    &--winner {
+      min-height: 125px;
     }
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .row-avatar {
+    display: none;
+  }
+
+  .leaderboard th,
+  .leaderboard td {
+    padding: 0.7rem;
   }
 }

@@ -1,5 +1,6 @@
 <section class="page">
-  <header class="header">
+  <header class="header page-header">
+    <span class="eyebrow">{{ i18n.t()['nav.brand'] }}</span>
     <h1>Welcome, {{ currentUser()?.username }}</h1>
     <p class="muted">{{ i18n.t()['dashboard.subtitle'] }}</p>
   </header>
@@ -13,20 +14,48 @@
     }
     @case ('ready') {
       @if (dashboard(); as d) {
-        <section class="cards">
-          <article class="card stat">
+        <section class="dashboard-hero">
+          <article class="next-action">
+            <div class="next-action__top">
+              <span class="eyebrow">{{ i18n.t()['dashboard.upcoming.title'] }}</span>
+              <a routerLink="/predictions">{{ i18n.t()['dashboard.upcoming.link'] }} →</a>
+            </div>
+            @if (d.upcomingMatches[0]; as match) {
+              <div class="fixture">
+                <div class="fixture__team">
+                  <span class="flag">{{ teamFlag(match.homeTeam) }}</span>
+                  <strong>{{ match.homeTeam }}</strong>
+                </div>
+                <div class="fixture__center">
+                  <span>{{ match.stage.replaceAll('_', ' ') }}</span>
+                  <b>VS</b>
+                  <time>{{ match.kickoffAt | date:'MMM d, HH:mm' }}</time>
+                </div>
+                <div class="fixture__team">
+                  <span class="flag">{{ teamFlag(match.awayTeam) }}</span>
+                  <strong>{{ match.awayTeam }}</strong>
+                </div>
+              </div>
+            } @else {
+              <p class="muted">{{ i18n.t()['dashboard.upcoming.empty'] }}</p>
+            }
+          </article>
+
+          <div class="cards">
+            <article class="card stat rank-stat">
             <span>{{ i18n.t()['dashboard.rank'] }}</span>
             <strong>{{ d.currentRank ? ('#' + d.currentRank) : '-' }}</strong>
-          </article>
-          <article class="card stat">
+            </article>
+            <article class="card stat">
             <span>{{ i18n.t()['dashboard.points'] }}</span>
             <strong>{{ d.totalPoints }}</strong>
-          </article>
-          <article class="card stat">
+            </article>
+            <article class="card stat question-stat">
             <span>{{ i18n.t()['dashboard.questions'] }}</span>
             <strong>{{ d.unansweredTournamentQuestionsCount }}</strong>
             <a routerLink="/tournament-questions">{{ i18n.t()['dashboard.questionsLink'] }}</a>
-          </article>
+            </article>
+          </div>
         </section>
 
         <section class="section stats-section">
@@ -54,6 +83,7 @@
           </div>
         </section>
 
+        <div class="dashboard-columns">
         <section class="section">
           <div class="section-header">
             <h2>{{ i18n.t()['dashboard.upcoming.title'] }}</h2>
@@ -109,6 +139,7 @@
             </div>
           }
         </section>
+        </div>
       }
     }
   }
