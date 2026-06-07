@@ -1,0 +1,156 @@
+.load-error {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+}
+
+.question-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.question-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+
+  &__body {
+    display: grid;
+    gap: 0.45rem;
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__text,
+  &__meta {
+    margin: 0;
+  }
+
+  &__text {
+    color: var(--text);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  &__meta {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  &__controls {
+    display: grid;
+    gap: 0.9rem;
+    padding: 1rem 1.25rem 1.15rem;
+  }
+}
+
+.badge--locked {
+  background: color-mix(in srgb, var(--warning) 18%, transparent);
+  color: var(--warning);
+}
+
+.source-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.source-option {
+  position: relative;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.8rem 0.85rem 0.8rem 2.15rem;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--background);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  input {
+    position: absolute;
+    top: 0.9rem;
+    left: 0.8rem;
+    accent-color: var(--accent);
+  }
+
+  &:hover {
+    border-color: var(--accent);
+  }
+
+  &--active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  &:has(input:disabled) {
+    cursor: wait;
+    opacity: 0.65;
+  }
+
+  &__label {
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 750;
+  }
+
+  &__desc {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+}
+
+.status,
+.options-preview__dynamic {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.status {
+  font-weight: 700;
+
+  &--saving {
+    color: var(--text-muted);
+  }
+
+  &--ok {
+    color: var(--success);
+  }
+
+  &--err {
+    color: var(--danger);
+  }
+}
+
+.options-preview {
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+
+  summary {
+    cursor: pointer;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  ul {
+    margin: 0.65rem 0 0;
+    padding-left: 1.2rem;
+  }
+}
+
+.options-preview__dynamic {
+  color: var(--success);
+}
+
+@media (max-width: 720px) {
+  .source-group {
+    grid-template-columns: 1fr;
+  }
+}

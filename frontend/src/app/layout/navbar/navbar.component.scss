@@ -43,10 +43,6 @@
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
 }
 
-.menu-toggle {
-  display: none;
-}
-
 .links {
   display: grid;
   gap: 0.35rem;
@@ -232,4 +228,5 @@
       box-shadow: inset 0 -3px 0 var(--accent);
     }
   }
+
 }

@@ -9,6 +9,58 @@
       <dt>{{ i18n.t()['profile.userId'] }}</dt><dd>{{ user.id }}</dd>
     </dl>
 
+    <section class="theme-card">
+      <div class="theme-card__intro">
+        <div>
+          <h2>{{ i18n.t()['theme.title'] }}</h2>
+          <p>{{ i18n.t()['theme.description'] }}</p>
+        </div>
+        @if (theme.selectedTheme(); as selected) {
+          <div class="selected-theme" aria-live="polite">
+            <span>{{ selected.flag }}</span>
+            <strong>{{ selected.team }}</strong>
+          </div>
+        } @else {
+          <div class="selected-theme" aria-live="polite">
+            <span>W</span>
+            <strong>{{ i18n.t()['theme.default'] }}</strong>
+          </div>
+        }
+      </div>
+
+      <label class="theme-select-label">
+        <span>{{ i18n.t()['theme.choose'] }}</span>
+        <select
+          class="theme-select"
+          [value]="theme.selectedId()"
+          (change)="setTheme($any($event.target).value)"
+        >
+          <option value="default">{{ i18n.t()['theme.default'] }}</option>
+          @for (option of theme.themes; track option.id) {
+            <option [value]="option.id">{{ option.flag }} {{ option.team }}</option>
+          }
+        </select>
+      </label>
+
+      <div class="theme-grid">
+        @for (option of theme.themes; track option.id) {
+          <button
+            type="button"
+            class="theme-option"
+            [class.theme-option--active]="theme.selectedId() === option.id"
+            (click)="setTheme(option.id)"
+          >
+            <span class="theme-option__flag">{{ option.flag }}</span>
+            <span class="theme-option__name">{{ option.team }}</span>
+            <span class="theme-option__colors" aria-hidden="true">
+              <i [style.background]="option.primary"></i>
+              <i [style.background]="option.secondary"></i>
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+
     <button type="button" class="danger" (click)="logout()">{{ i18n.t()['profile.signOut'] }}</button>
   }
 </section>

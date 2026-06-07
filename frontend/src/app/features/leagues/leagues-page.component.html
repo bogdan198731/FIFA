@@ -70,20 +70,32 @@
           [message]="i18n.t()['leagues.empty.message']"
         />
       } @else {
-        <div class="league-list">
-          @for (league of leagues(); track league.id) {
-            <div class="league-card">
-              <div class="league-info">
-                <a [routerLink]="['/leagues', league.id]" class="league-name">{{ league.name }}</a>
-                <span class="muted">{{ league.memberCount }} {{ league.memberCount === 1 ? i18n.t()['leagues.member'] : i18n.t()['leagues.members'] }}</span>
-              </div>
-              <div class="league-code">
-                <span class="code-label">{{ i18n.t()['leagues.inviteCode'] }}</span>
-                <span class="code-value">{{ league.inviteCode }}</span>
-                <button class="ghost small" (click)="copyCode(league.inviteCode)" title="Copy invite code">{{ i18n.t()['leagues.copy'] }}</button>
-              </div>
-            </div>
-          }
+        <div class="table-wrap">
+          <table class="leagues-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ i18n.t()['leagues.league'] }}</th>
+                <th scope="col" class="members">{{ i18n.t()['leagues.members'] }}</th>
+                <th scope="col">{{ i18n.t()['leagues.inviteCode'] }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (league of leagues(); track league.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/leagues', league.id]" class="league-name">{{ league.name }}</a>
+                  </td>
+                  <td class="members">{{ league.memberCount }}</td>
+                  <td>
+                    <div class="invite-code">
+                      <span class="code-value">{{ league.inviteCode }}</span>
+                      <button class="ghost small" (click)="copyCode(league.inviteCode)" title="Copy invite code">{{ i18n.t()['leagues.copy'] }}</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       }
     }
