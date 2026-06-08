@@ -5,6 +5,8 @@ import com.example.worldcup.match.Match;
 import com.example.worldcup.match.MatchRepository;
 import com.example.worldcup.match.MatchStage;
 import com.example.worldcup.match.MatchType;
+import com.example.worldcup.player.Player;
+import com.example.worldcup.player.PlayerRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.slf4j.Logger;
@@ -27,11 +29,14 @@ class WorldCupSyncPersister {
     private static final Logger log = LoggerFactory.getLogger(WorldCupSyncPersister.class);
 
     private final MatchRepository matchRepository;
+    private final PlayerRepository playerRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     WorldCupSyncPersister(MatchRepository matchRepository,
+                          PlayerRepository playerRepository,
                           ApplicationEventPublisher eventPublisher) {
         this.matchRepository = matchRepository;
+        this.playerRepository = playerRepository;
         this.eventPublisher = eventPublisher;
     }
 
@@ -218,6 +223,63 @@ class WorldCupSyncPersister {
             return homeScore > awayScore ? homeTeam : awayTeam;
         }
         return null;
+    }
+
+    /**
+     * Upserts all players from a squads API response (one response per team).
+     * Each element of {@code squadResponses} is the API's {@code response[n]} node:
+     * <pre>{ "team": { "id": 1, "name": "..." }, "players": [ { "id": 1, "name": "...",
+     * "position": "Goalkeeper", "photo": "..." }, ... ] }</pre>
+     */
+    @Transactional
+    SquadSyncResult persistSquads(List<JsonNode> squadResponses) {
+        int created = 0, updated = 0;
+
+        for (JsonNode teamEntry : squadResponses) {
+            String teamName = teamEntry.at("/team/name").asText(null);
+            int apiTeamId = teamEntry.at("/team/id").asInt(0);
+            if (teamName == null) continue;
+
+            JsonNode players = teamEntry.get("players");
+            if (players == null || !players.isArray()) continue;
+
+            for (JsonNode p : players) {
+                long apiPlayerId = p.at("/id").asLong(0);
+                String name = p.at("/name").asText(null);
+                String position = p.at("/position").asText(null);
+                String photo = p.at("/photo").asText(null);
+
+                if (name == null || position == null) continue;
+
+                Optional<Player> existing = apiPlayerId > 0
+                        ? playerRepository.findByApiPlayerId(apiPlayerId)
+                        : Optional.empty();
+
+                if (existing.isPresent()) {
+                    Player ent = existing.get();
+                    ent.setName(name);
+                    ent.setTeamName(teamName);
+                    ent.setPosition(position);
+                    ent.setPhoto(photo);
+                    ent.setApiTeamId(apiTeamId > 0 ? apiTeamId : null);
+                    updated++;
+                } else {
+                    Player ent = new Player(
+                            name,
+                            teamName,
+                            position,
+                            (photo != null && !photo.isBlank()) ? photo : null,
+                            apiPlayerId > 0 ? apiPlayerId : null,
+                            apiTeamId > 0 ? apiTeamId : null
+                    );
+                    playerRepository.save(ent);
+                    created++;
+                }
+            }
+        }
+
+        log.info("Squad sync complete — created={}, updated={}", created, updated);
+        return new SquadSyncResult(squadResponses.size(), created, updated);
     }
 
     private enum SyncOutcome { CREATED, UPDATED, UNCHANGED }

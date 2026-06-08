@@ -1,4 +1,11 @@
-export type OptionSource = 'STATIC' | 'TEAMS' | 'PLAYERS';
+export type OptionSource =
+  | 'STATIC'
+  | 'TEAMS'
+  | 'PLAYERS'
+  | 'PLAYERS_GOALKEEPERS'
+  | 'PLAYERS_DEFENDERS'
+  | 'PLAYERS_MIDFIELDERS'
+  | 'PLAYERS_ATTACKERS';
 
 export interface TournamentQuestion {
   id: number;

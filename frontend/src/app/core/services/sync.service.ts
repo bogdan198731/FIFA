@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { SyncResult } from '../models/sync.model';
+import { SyncResult, SquadSyncResult } from '../models/sync.model';
 
 /**
  * Triggers the backend's external-API sync agent (API-Football), which
@@ -17,5 +17,10 @@ export class SyncService {
   /** POST /api/admin/sync — pulls fresh data from the external API. */
   run(): Observable<SyncResult> {
     return this.http.post<SyncResult>(this.base, {});
+  }
+
+  /** POST /api/admin/sync/squads — imports player rosters for all teams. */
+  syncSquads(): Observable<SquadSyncResult> {
+    return this.http.post<SquadSyncResult>(`${this.base}/squads`, {});
   }
 }

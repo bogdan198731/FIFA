@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +96,71 @@ public class WorldCupSyncService {
         }
         log.info("Fetched group assignments for {} teams from standings.", teamGroups.size());
         return teamGroups;
+    }
+
+    /**
+     * Fetches squads for every team in the tournament and persists them to the
+     * players table. Calls /fixtures once to discover team IDs, then calls
+     * /players/squads?team={id} for each unique team (48 calls for WC 2026).
+     * Intended as a one-time admin operation at tournament start.
+     */
+    public SquadSyncResult syncSquads() {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "External API sync is not configured. Set the API_FOOTBALL_KEY "
+                            + "environment variable on the server.");
+        }
+
+        // Collect unique team IDs from the fixtures we already know about.
+        // LinkedHashMap preserves insertion order for predictable logging.
+        Map<Integer, String> teamIdToName = new LinkedHashMap<>();
+        List<JsonNode> fixtures = fetchAllFixtures();
+        for (JsonNode f : fixtures) {
+            int homeId   = f.at("/teams/home/id").asInt(0);
+            String homeN = f.at("/teams/home/name").asText(null);
+            int awayId   = f.at("/teams/away/id").asInt(0);
+            String awayN = f.at("/teams/away/name").asText(null);
+            if (homeId > 0 && homeN != null) teamIdToName.putIfAbsent(homeId, homeN);
+            if (awayId > 0 && awayN != null) teamIdToName.putIfAbsent(awayId, awayN);
+        }
+        log.info("Fetched {} unique teams from fixtures for squad sync.", teamIdToName.size());
+
+        List<JsonNode> squadEntries = new ArrayList<>();
+        for (Map.Entry<Integer, String> entry : teamIdToName.entrySet()) {
+            try {
+                List<JsonNode> squads = fetchSquadForTeam(entry.getKey());
+                squadEntries.addAll(squads);
+            } catch (Exception ex) {
+                log.warn("Could not fetch squad for team {} ({}): {}", entry.getValue(), entry.getKey(), ex.getMessage());
+            }
+        }
+
+        return persister.persistSquads(squadEntries);
+    }
+
+    private List<JsonNode> fetchSquadForTeam(int teamId) {
+        String url = API_BASE + "/players/squads?team=" + teamId;
+        JsonNode body;
+        try {
+            body = restClient.get()
+                    .uri(url)
+                    .header("x-apisports-key", apiKey)
+                    .retrieve()
+                    .body(JsonNode.class);
+        } catch (RestClientException ex) {
+            throw new ApiException(HttpStatus.BAD_GATEWAY,
+                    "Could not reach API-Football for team " + teamId + ": " + ex.getMessage());
+        }
+        if (body == null) return List.of();
+        JsonNode errors = body.get("errors");
+        if (errors != null && !errors.isEmpty() && !(errors.isObject() && errors.isEmpty())) {
+            log.warn("Squads error for team {}: {}", teamId, errors);
+            return List.of();
+        }
+        List<JsonNode> result = new ArrayList<>();
+        JsonNode response = body.get("response");
+        if (response != null) response.forEach(result::add);
+        return result;
     }
 
     private List<JsonNode> fetchAllFixtures() {
