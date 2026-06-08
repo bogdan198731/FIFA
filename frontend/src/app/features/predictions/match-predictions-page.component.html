@@ -36,7 +36,7 @@
                   {{ section.matches.length }}
                   {{ section.matches.length === 1 ? i18n.t()['predictions.match'] : i18n.t()['predictions.matches'] }}
                   @if (openInSection(section) > 0) {
-                    · {{ openInSection(section) }} {{ i18n.t()['predictions.open'] }}
+                    · {{ openInSection(section) }} {{ openInSection(section) === 1 ? i18n.t()['predictions.openSingular'] : i18n.t()['predictions.open'] }}
                   }
                 </span>
               </summary>
