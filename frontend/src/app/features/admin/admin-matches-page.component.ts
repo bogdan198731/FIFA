@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 
 import { MatchFormComponent } from './match-form.component';
 import { ExternalSyncButtonComponent } from './external-sync-button.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { Match } from '../../core/models/match-prediction.model';
 import { MatchService } from '../../core/services/match.service';
 
@@ -10,7 +11,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 @Component({
   selector: 'app-admin-matches-page',
   standalone: true,
-  imports: [MatchFormComponent, ExternalSyncButtonComponent],
+  imports: [MatchFormComponent, ExternalSyncButtonComponent, LoadingSpinnerComponent],
   templateUrl: './admin-matches-page.component.html',
   styleUrl: './admin-page.component.scss'
 })

@@ -21,6 +21,7 @@ export class ResultFormComponent implements OnChanges {
   @Output() readonly changed = new EventEmitter<Match>();
 
   readonly submitting = signal(false);
+  readonly locking = signal(false);
   readonly feedback = signal<string | null>(null);
   readonly lockLabel = lockLabel;
 
@@ -72,10 +73,20 @@ export class ResultFormComponent implements OnChanges {
   }
 
   lock(): void {
-    this.adminMatchService.lock(this.match.id).subscribe((match) => this.changed.emit(match));
+    this.locking.set(true);
+    this.feedback.set(null);
+    this.adminMatchService.lock(this.match.id).subscribe({
+      next: (match) => { this.locking.set(false); this.changed.emit(match); },
+      error: () => { this.locking.set(false); this.feedback.set('Could not lock match.'); }
+    });
   }
 
   unlock(): void {
-    this.adminMatchService.unlock(this.match.id).subscribe((match) => this.changed.emit(match));
+    this.locking.set(true);
+    this.feedback.set(null);
+    this.adminMatchService.unlock(this.match.id).subscribe({
+      next: (match) => { this.locking.set(false); this.changed.emit(match); },
+      error: () => { this.locking.set(false); this.feedback.set('Could not unlock match.'); }
+    });
   }
 }

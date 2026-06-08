@@ -73,7 +73,7 @@
               <span>{{ i18n.t()['dashboard.stats.scored'] }}</span>
             </div>
             <div>
-              <strong>{{ d.predictionStatistics.averagePointsPerScoredPrediction | number:'1.1-1' }}</strong>
+              <strong>{{ d.predictionStatistics.scoredPredictions ? (d.predictionStatistics.averagePointsPerScoredPrediction | number:'1.1-1') : '-' }}</strong>
               <span>{{ i18n.t()['dashboard.stats.avg'] }}</span>
             </div>
             <div>
