@@ -23,7 +23,7 @@
             <article class="podium-card" [class.podium-card--winner]="entry.rank === 1">
               <span class="podium-rank">#{{ entry.rank }}</span>
               <span class="avatar">{{ entry.username.slice(0, 1).toUpperCase() }}</span>
-              <strong>{{ entry.username }}</strong>
+              <strong>{{ displayName(entry.username) }}</strong>
               <span>{{ entry.totalPoints }} {{ i18n.t()['leaderboard.points'] }}</span>
             </article>
           }
@@ -43,7 +43,7 @@
                   <td class="rank">{{ entry.rank }}</td>
                   <td>
                     <span class="row-avatar">{{ entry.username.slice(0, 1).toUpperCase() }}</span>
-                    <span class="name">{{ entry.username }}</span>
+                    <span class="name">{{ displayName(entry.username) }}</span>
                     @if (entry.userId === currentUserId()) {
                       <span class="you">you</span>
                     }

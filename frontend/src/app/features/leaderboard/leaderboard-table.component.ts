@@ -26,6 +26,11 @@ export class LeaderboardTableComponent implements OnInit {
   readonly errorMessage = signal<string | null>(null);
 
   readonly currentUserId = computed(() => this.auth.currentUser()?.id ?? null);
+  readonly isAuthenticated = this.auth.isAuthenticated;
+
+  displayName(username: string): string {
+    return this.isAuthenticated() ? username : username.slice(0, 1).toUpperCase() + '***';
+  }
 
   ngOnInit(): void {
     this.leaderboardService.list().subscribe({
