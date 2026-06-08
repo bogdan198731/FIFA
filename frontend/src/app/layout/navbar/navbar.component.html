@@ -16,14 +16,14 @@
   </button>
 
   <div class="links">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()"><span aria-hidden="true">⌂</span>{{ i18n.t()['nav.home'] }}</a>
-    <a routerLink="/leaderboard" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">#</span>{{ i18n.t()['nav.leaderboard'] }}</a>
+    <a class="mobile-visible" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()"><span aria-hidden="true">⌂</span>{{ i18n.t()['nav.home'] }}</a>
+    <a class="mobile-visible" routerLink="/leaderboard" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">#</span>{{ i18n.t()['nav.leaderboard'] }}</a>
 
     @if (isAuthenticated()) {
-      <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">◫</span>{{ i18n.t()['nav.dashboard'] }}</a>
-      <a routerLink="/predictions" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">✓</span>{{ i18n.t()['nav.predictions'] }}</a>
+      <a class="mobile-visible" routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">◫</span>{{ i18n.t()['nav.dashboard'] }}</a>
+      <a class="mobile-visible" routerLink="/predictions" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">✓</span>{{ i18n.t()['nav.predictions'] }}</a>
       <a routerLink="/tournament-questions" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">?</span>{{ i18n.t()['nav.questions'] }}</a>
-      <a routerLink="/leagues" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">◎</span>{{ i18n.t()['nav.leagues'] }}</a>
+      <a class="mobile-visible" routerLink="/leagues" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">◎</span>{{ i18n.t()['nav.leagues'] }}</a>
       @if (isAdmin()) {
         <a routerLink="/admin" routerLinkActive="active" (click)="closeMenu()"><span aria-hidden="true">⚙</span>{{ i18n.t()['nav.admin'] }}</a>
       }
