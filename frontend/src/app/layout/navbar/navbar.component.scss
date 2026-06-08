@@ -212,11 +212,7 @@
       text-align: center;
     }
 
-    a[href="/dashboard"],
-    a[href="/predictions"],
-    a[href="/leaderboard"],
-    a[href="/"],
-    a[href="/leagues"] {
+    a.mobile-visible {
       display: flex;
     }
 
