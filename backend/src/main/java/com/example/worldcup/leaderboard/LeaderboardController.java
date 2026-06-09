@@ -1,5 +1,7 @@
 package com.example.worldcup.leaderboard;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +19,10 @@ public class LeaderboardController {
     }
 
     @GetMapping
-    public List<LeaderboardEntry> leaderboard() {
-        return leaderboardService.getLeaderboard();
+    public List<LeaderboardEntry> leaderboard(Authentication authentication) {
+        boolean anonymous = authentication == null
+                || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken;
+        return leaderboardService.getLeaderboard(anonymous);
     }
 }

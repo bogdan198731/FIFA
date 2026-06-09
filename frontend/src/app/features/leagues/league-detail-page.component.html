@@ -33,7 +33,7 @@
                 <tr [class.is-self]="entry.userId === currentUserId()">
                   <td class="rank">{{ entry.rank }}</td>
                   <td>
-                    <span class="name">{{ entry.username }}</span>
+                    <span class="name">{{ displayName(entry.username) }}</span>
                     @if (entry.userId === currentUserId()) {
                       <span class="you">you</span>
                     }

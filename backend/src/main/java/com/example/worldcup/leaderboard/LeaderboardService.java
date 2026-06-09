@@ -25,7 +25,7 @@ public class LeaderboardService {
      * score jumps over the ties.
      */
     @Transactional(readOnly = true)
-    public List<LeaderboardEntry> getLeaderboard() {
+    public List<LeaderboardEntry> getLeaderboard(boolean anonymous) {
         List<User> users = userRepository.findAllByOrderByTotalPointsDescUsernameAsc();
         List<LeaderboardEntry> result = new ArrayList<>(users.size());
 
@@ -38,9 +38,17 @@ public class LeaderboardService {
                 lastScore = user.getTotalPoints();
             }
             result.add(new LeaderboardEntry(
-                    rank, user.getId(), user.getUsername(), user.getTotalPoints()
+                    rank,
+                    anonymous ? null : user.getId(),
+                    anonymous ? maskUsername(user.getUsername()) : user.getUsername(),
+                    user.getTotalPoints()
             ));
         }
         return result;
+    }
+
+    private String maskUsername(String username) {
+        if (username == null || username.isEmpty()) return "***";
+        return Character.toUpperCase(username.charAt(0)) + "***";
     }
 }
