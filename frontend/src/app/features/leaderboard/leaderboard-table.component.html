@@ -19,7 +19,7 @@
         />
       } @else {
         <section class="podium" aria-label="Top players">
-          @for (entry of entries().slice(0, 3); track entry.userId) {
+          @for (entry of entries().slice(0, 3); track entry.userId ?? $index) {
             <article class="podium-card" [class.podium-card--winner]="entry.rank === 1">
               <span class="podium-rank">#{{ entry.rank }}</span>
               <span class="avatar">{{ displayName(entry.username).slice(0, 1) }}</span>
@@ -38,13 +38,13 @@
               </tr>
             </thead>
             <tbody>
-              @for (entry of entries(); track entry.userId) {
-                <tr [class.is-self]="entry.userId === currentUserId()">
+              @for (entry of entries(); track entry.userId ?? $index) {
+                <tr [class.is-self]="isCurrentUser(entry)">
                   <td class="rank">{{ entry.rank }}</td>
                   <td>
                     <span class="row-avatar">{{ displayName(entry.username).slice(0, 1) }}</span>
                     <span class="name">{{ displayName(entry.username) }}</span>
-                    @if (entry.userId === currentUserId()) {
+                    @if (isCurrentUser(entry)) {
                       <span class="you">you</span>
                     }
                   </td>

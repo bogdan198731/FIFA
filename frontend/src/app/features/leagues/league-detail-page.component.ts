@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { I18nService } from '../../core/services/i18n.service';
 import { LeagueService } from '../../core/services/league.service';
 import { AuthService } from '../../core/services/auth.service';
-import { LeaderboardEntry } from '../../core/models/leaderboard.model';
+import { isCurrentLeaderboardEntry, LeaderboardEntry } from '../../core/models/leaderboard.model';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
@@ -32,6 +32,10 @@ export class LeagueDetailPageComponent implements OnInit {
 
   displayName(username: string): string {
     return this.isAuthenticated() ? username : username.slice(0, 1).toUpperCase() + '***';
+  }
+
+  isCurrentUser(entry: LeaderboardEntry): boolean {
+    return isCurrentLeaderboardEntry(entry, this.currentUserId());
   }
 
   ngOnInit(): void {

@@ -3,7 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { LeaderboardService } from '../../core/services/leaderboard.service';
-import { LeaderboardEntry } from '../../core/models/leaderboard.model';
+import { isCurrentLeaderboardEntry, LeaderboardEntry } from '../../core/models/leaderboard.model';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
@@ -30,6 +30,10 @@ export class LeaderboardTableComponent implements OnInit {
 
   displayName(username: string): string {
     return this.isAuthenticated() ? username : username.slice(0, 1).toUpperCase() + '***';
+  }
+
+  isCurrentUser(entry: LeaderboardEntry): boolean {
+    return isCurrentLeaderboardEntry(entry, this.currentUserId());
   }
 
   ngOnInit(): void {
