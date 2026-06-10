@@ -2,6 +2,18 @@
   <header class="header">
     <h1>Tournament Questions</h1>
     <p>Set how options are resolved for each question — static list or live from the database.</p>
+    <div class="squad-sync">
+      <button type="button" class="secondary-action" [disabled]="squadSyncing()" (click)="syncSquads()">
+        {{ squadSyncing() ? 'Syncing squads…' : 'Sync squads from API' }}
+      </button>
+      @if (squadSyncResult(); as r) {
+        <span class="squad-sync__msg squad-sync__msg--ok">
+          {{ r.teamsProcessed }} teams · {{ r.playersCreated }} created · {{ r.playersUpdated }} updated
+        </span>
+      } @else if (squadSyncError()) {
+        <span class="squad-sync__msg squad-sync__msg--err" role="alert">{{ squadSyncError() }}</span>
+      }
+    </div>
   </header>
 
   @switch (state()) {
@@ -71,7 +83,7 @@
                 } @else if (q.optionSource !== 'STATIC') {
                   <p class="options-preview__dynamic">
                     ✓ {{ q.options?.length ?? 0 }} options resolved live from
-                    {{ q.optionSource === 'TEAMS' ? 'matches table' : 'players table' }}
+                    {{ sourceLabel(q.optionSource) | lowercase }}
                   </p>
                 }
               </div>

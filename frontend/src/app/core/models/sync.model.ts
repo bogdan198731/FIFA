@@ -7,3 +7,10 @@ export interface SyncResult {
   updated: number;
   unchanged: number;
 }
+
+/** Result of POST /api/admin/sync/squads — squad roster import. */
+export interface SquadSyncResult {
+  teamsProcessed: number;
+  playersCreated: number;
+  playersUpdated: number;
+}

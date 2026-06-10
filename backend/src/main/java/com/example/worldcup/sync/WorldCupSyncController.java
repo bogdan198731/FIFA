@@ -18,4 +18,9 @@ public class WorldCupSyncController {
     public SyncResult sync() {
         return syncService.sync();
     }
+
+    @PostMapping("/squads")
+    public SquadSyncResult syncSquads() {
+        return syncService.syncSquads();
+    }
 }

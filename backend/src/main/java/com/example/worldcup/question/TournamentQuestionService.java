@@ -2,6 +2,7 @@ package com.example.worldcup.question;
 
 import com.example.worldcup.common.ApiException;
 import com.example.worldcup.match.MatchRepository;
+import com.example.worldcup.player.PlayerRepository;
 import com.example.worldcup.question.dto.SubmitAnswerRequest;
 import com.example.worldcup.question.dto.TournamentAnswerResponse;
 import com.example.worldcup.question.dto.TournamentQuestionResponse;
@@ -26,15 +27,18 @@ public class TournamentQuestionService {
     private final TournamentAnswerRepository answerRepository;
     private final UserRepository userRepository;
     private final MatchRepository matchRepository;
+    private final PlayerRepository playerRepository;
 
     public TournamentQuestionService(TournamentQuestionRepository questionRepository,
                                      TournamentAnswerRepository answerRepository,
                                      UserRepository userRepository,
-                                     MatchRepository matchRepository) {
+                                     MatchRepository matchRepository,
+                                     PlayerRepository playerRepository) {
         this.questionRepository = questionRepository;
         this.answerRepository = answerRepository;
         this.userRepository = userRepository;
         this.matchRepository = matchRepository;
+        this.playerRepository = playerRepository;
     }
 
     @Transactional(readOnly = true)
@@ -56,8 +60,19 @@ public class TournamentQuestionService {
             teams.addAll(matchRepository.findAllDistinctAwayTeams());
             return List.copyOf(teams);
         }
-        // PLAYERS — not yet implemented, fall back to static
-        return q.getOptions();
+        return switch (q.getOptionSource()) {
+            case PLAYERS             -> playerRepository.findAllByOrderByNameAsc()
+                                            .stream().map(p -> p.getName()).toList();
+            case PLAYERS_GOALKEEPERS -> playerRepository.findByPositionOrderByNameAsc("Goalkeeper")
+                                            .stream().map(p -> p.getName()).toList();
+            case PLAYERS_DEFENDERS   -> playerRepository.findByPositionOrderByNameAsc("Defender")
+                                            .stream().map(p -> p.getName()).toList();
+            case PLAYERS_MIDFIELDERS -> playerRepository.findByPositionOrderByNameAsc("Midfielder")
+                                            .stream().map(p -> p.getName()).toList();
+            case PLAYERS_ATTACKERS   -> playerRepository.findByPositionOrderByNameAsc("Attacker")
+                                            .stream().map(p -> p.getName()).toList();
+            default                  -> q.getOptions();
+        };
     }
 
     @Transactional(readOnly = true)
