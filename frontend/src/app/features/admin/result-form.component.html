@@ -5,8 +5,12 @@
       <p>{{ match.stage.replaceAll('_', ' ') }} - {{ lockLabel(match) }}</p>
     </div>
     <div class="lock-actions">
-      <button type="button" class="secondary" (click)="lock()">Lock</button>
-      <button type="button" class="secondary" (click)="unlock()">Unlock</button>
+      <button type="button" class="secondary" [disabled]="locking() || submitting()" (click)="lock()">
+        {{ locking() ? 'Locking...' : 'Lock' }}
+      </button>
+      <button type="button" class="secondary" [disabled]="locking() || submitting()" (click)="unlock()">
+        {{ locking() ? 'Unlocking...' : 'Unlock' }}
+      </button>
     </div>
   </header>
 

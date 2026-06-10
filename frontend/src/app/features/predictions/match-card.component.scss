@@ -136,6 +136,15 @@ select {
   font-variant-numeric: tabular-nums;
   font-weight: 850;
   text-align: center;
+
+  &--error {
+    border-color: var(--danger);
+
+    &:focus {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 20%, transparent);
+    }
+  }
 }
 
 .dash {

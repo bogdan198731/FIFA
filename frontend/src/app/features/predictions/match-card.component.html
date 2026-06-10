@@ -53,6 +53,7 @@
       <input
         type="number" min="0" inputmode="numeric"
         class="score-input"
+        [class.score-input--error]="homeScoreControl.invalid && homeScoreControl.touched"
         [formControl]="homeScoreControl"
         [attr.aria-label]="match.homeTeam + ' ' + i18n.t()['match.goalsFor']"
       />
@@ -60,6 +61,7 @@
       <input
         type="number" min="0" inputmode="numeric"
         class="score-input"
+        [class.score-input--error]="awayScoreControl.invalid && awayScoreControl.touched"
         [formControl]="awayScoreControl"
         [attr.aria-label]="match.awayTeam + ' ' + i18n.t()['match.goalsFor']"
       />
